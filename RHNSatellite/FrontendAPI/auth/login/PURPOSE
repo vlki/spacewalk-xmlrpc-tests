@@ -1,0 +1,7 @@
+PURPOSE of /RHNSatellite/FrontendAPI/auth/login
+Description: Test of XML-RPC call auth.login
+Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
+
+This is a test of XML-RPC call auth.login. It checks whether
+existing user can login. It also tries to login as newly 
+created user and with credentials of non-standard encoding.
