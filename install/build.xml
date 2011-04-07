@@ -1,6 +1,7 @@
 <project name="spacewalk-xmlrpc-tests" default="install" basedir=".">
   <description>
-    Build file used for installation and setup of the XML-RPC test suite.
+  Build file used for installation and setup of the 
+  Spacewalk's XML-RPC test suite.
   </description>
 
   <!-- Server and admin's credentials used during testing -->
