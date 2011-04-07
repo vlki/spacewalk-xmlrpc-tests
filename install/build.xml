@@ -89,12 +89,16 @@
     <jar destfile="${rhn.jar.instr}" basedir="${rhn.jar.final.dir}"/>
   </target>
 
-  <target name="replace">
+  <target name="replace"
+          description="Replaces the original rhn.jar with the instrumented one"
+          >
     <copy file="${rhn.jar.instr}" tofile="${rhn.jar.path}" overwrite="true" />
   </target>
 
-  <target name="setup-tomcat">
-    <symlink link="/usr/share/java/tomcat6/cobertura.jar" resource="/usr/share/java/cobertura.jar" />
+  <target name="setup-tomcat"
+          description="Setups the Tomcat server to load Cobertura's jar">
+    <symlink link="/usr/share/java/tomcat6/cobertura.jar"
+             resource="/usr/share/java/cobertura.jar" />
     <exec executable="${service.tomcat}">
       <arg value="restart" />
     </exec>
