@@ -22,7 +22,7 @@
   <property name="rhn.jar.instr" location="rhn.cobertura.jar" />
 
   <!-- Name of the original jar file -->
-  <property name="rhn.original.jar" location="rhn.original.jar" />
+  <property name="rhn.jar.original" location="rhn.original.jar" />
 
   <!-- Name of the Cobertura data file -->
   <property name="cobertura.datafile" location="cobertura.ser" />
@@ -39,7 +39,8 @@
   <!-- ##### TARGETS ##### -->
 
   <target name="install" 
-          depends="unjar,instrument,merge,jar,replace,setup-tomcat"
+          depends=
+          "unjar,instrument,merge,jar,replace,setup-tomcat,restart-tomcat"
           description=
           "Runs the sequence of targets to setup the system for tests"
           />
@@ -97,9 +98,16 @@
   </target>
 
   <target name="setup-tomcat"
-          description="Setups the Tomcat server to load Cobertura's jar">
+          description="Setups the Tomcat server to load Cobertura's jar"
+          depends="-check-tomcat-cobertura-jar"
+          unless="tomcat.cobertura.jar.present"> 
     <symlink link="/usr/share/java/tomcat6/cobertura.jar"
-             resource="/usr/share/java/cobertura.jar" />
+             resource="/usr/share/java/cobertura.jar"
+             failonerror="false" />
+  </target>
+
+  <target name="restart-tomcat"
+          description="Restarts the Tomcat server service">
     <exec executable="${service.tomcat}">
       <arg value="restart" />
     </exec>
@@ -132,6 +140,11 @@
     <fail unless="rhn.jar.instr.dir.present"
           message=
           "Merge depends on instrumented classes. Call instrument first." />
+  </target>
+
+  <target name="-check-tomcat-cobertura-jar">
+    <available file="/usr/share/java/tomcat6/cobertura.jar"
+               property="tomcat.cobertura.jar.present" />
   </target>
   
 </project>
