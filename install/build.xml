@@ -39,8 +39,8 @@
   <!-- ##### TARGETS ##### -->
 
   <target name="install" 
-          depends=
-          "unjar,instrument,merge,jar,replace,setup-tomcat,restart-tomcat"
+          depends="unjar,instrument,merge,jar,replace,
+symlink-cobertura-to-tomcat,copy-cobertura-datafile,restart-tomcat"
           description=
           "Runs the sequence of targets to setup the system for tests"
           />
@@ -97,7 +97,20 @@
     <copy file="${rhn.jar.instr}" tofile="${rhn.jar.path}" overwrite="true" />
   </target>
 
-  <target name="setup-tomcat"
+  <target name="copy-cobertura-datafile">
+    <copy file="${cobertura.datafile}"
+          tofile="/usr/share/tomcat6/cobertura.default.ser"
+          overwrite="true" />
+    <copy file="${cobertura.datafile}"
+          tofile="/usr/share/tomcat6/cobertura.ser"
+          overwrite="true" />
+    <chmod file="/usr/share/tomcat6/cobertura.default.ser"
+           perm="ugo+rx" />
+    <chmod file="/usr/share/tomcat6/cobertura.ser"
+           perm="ugo+rwx" />
+  </target>
+
+  <target name="symlink-cobertura-to-tomcat"
           description="Setups the Tomcat server to load Cobertura's jar"
           depends="-check-tomcat-cobertura-jar"
           unless="tomcat.cobertura.jar.present"> 
