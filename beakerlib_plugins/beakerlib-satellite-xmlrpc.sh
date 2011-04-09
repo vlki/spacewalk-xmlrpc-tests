@@ -33,6 +33,10 @@ SATELLITE_XMLRPC_SCRIPTS=${SATELLITE_XMLRPC_SCRIPTS:-"/some/default/path"}
 
 SATELLITE_VERSION=${SATELLITE_VERSION:-"1.2"}
 
+SATELLITE_SERVER_HOST=${SATELLITE_SERVER_HOST:-"localhost"}
+SATELLITE_LOGIN=${SATELLITE_LOGIN:-"admin"}
+SATELLITE_PASSWORD=${SATELLITE_PASSWORD:-"redhat"}
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #   Internal Stuff
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -87,7 +91,7 @@ rlSatelliteXmlRpcFrontendRun(){
     # resolve the absolute path
     scriptExpanded=$( readlink -f "$scriptExpanded" )
 
-    rlRun -s "$scriptExpanded" 0
+    rlRun -s -l -t "$scriptExpanded" 0
     return 0
 }
 
@@ -115,7 +119,22 @@ rlSatelliteAssertTomcat6LogNotDiffer(){
         return 1
     fi 
 
-    rlAssertNotDiffer "$Tomcat6LogFile" "$Tomcat6LogSaved"
+    AdditionTmpFile=$( mktemp )
+
+    # Get just the new lines and strip the ">  " prefix
+    diff "$Tomcat6LogSaved" "$Tomcat6LogFile" | grep "^> " | cut -c 3- > "$AdditionTmpFile"
+
+    local msg="There should not be any addition to tomcat6 log"
+   
+    # if addition is not empty
+    if [ -s "$AdditionTmpFile" ]; then
+        __INTERNAL_LogAndJournalFail "$msg"
+        rlLog "`cat $AdditionTmpFile`"
+        return 1
+    fi
+
+    __INTERNAL_LogAndJournalPass "$msg"
+    return 0
 }
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
