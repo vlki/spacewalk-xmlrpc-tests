@@ -7,6 +7,9 @@
 # Include the BeakerLib environment
 . /usr/share/beakerlib/beakerlib.sh
 
+# With Satellite plugin
+. ./../../../../beakerlib_plugins/beakerlib-satellite-xmlrpc.sh
+
 # Set full test name
 TEST=/auth/login
 
@@ -14,15 +17,14 @@ TEST=/auth/login
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=admin
 
+SATELLITE_XMLRPC_SCRIPTS="./../../../../xmlrpc_scripts"
+
 rlJournalStart
 
 # ===================================================================
 # Setup phase(s)
 # ===================================================================
-# rlPhaseStartSetup "Configure X"
-
-# Some setup
-# rlAssertRpm "spacewalk-schema" || rlDie "Package spacewalk-schema not installed, dying."
+# rlPhaseStartSetup "Setup"
 
 # rlPhaseEnd
 
@@ -33,11 +35,15 @@ rlJournalStart
 # ===================================================================
 rlPhaseStartTest "Testing auth.login of existing administrator"
 
-# Expect successful run
-rlRun "./auth.login.py vlcek vlcek > stdout" 0
+rlSatelliteSaveTomcat6Log
+
+rlSatelliteXmlRpcFrontendRun "auth.login.py vlcek vlcek"
 
 # Expect the session key of length 36
-rlAssertGrep "[a-z0-9]\{36\}" "stdout"
+rlAssertGrep "[a-z0-9]\{36\}" "$rlRun_LOG"
+rlRun "rm -f $rlRun_LOG"
+
+rlSatelliteAssertTomcat6LogNotDiffer
 
 rlPhaseEnd
 
@@ -46,9 +52,7 @@ rlPhaseEnd
 # ===================================================================
 # Cleanup phase(s)
 # ===================================================================
-# rlPhaseStartCleanup
-
-# rlRun "do_some_cleanup"   # e.g. remove temp files and so on
+# rlPhaseStartCleanup "Cleanup"
 
 # rlPhaseEnd
 
