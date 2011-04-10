@@ -33,10 +33,6 @@ SATELLITE_XMLRPC_SCRIPTS=${SATELLITE_XMLRPC_SCRIPTS:-"/some/default/path"}
 
 SATELLITE_VERSION=${SATELLITE_VERSION:-"1.2"}
 
-SATELLITE_SERVER_HOST=${SATELLITE_SERVER_HOST:-"localhost"}
-SATELLITE_LOGIN=${SATELLITE_LOGIN:-"admin"}
-SATELLITE_PASSWORD=${SATELLITE_PASSWORD:-"redhat"}
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #   Internal Stuff
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

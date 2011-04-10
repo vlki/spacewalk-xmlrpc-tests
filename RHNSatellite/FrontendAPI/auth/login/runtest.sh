@@ -27,11 +27,11 @@ rlJournalStart
 # ===================================================================
 # Do the testing
 # ===================================================================
-rlPhaseStartTest "Testing auth.login of existing administrator"
+rlPhaseStartTest "Testing auth.login of default administrator"
 
 rlSatelliteSaveTomcat6Log
 
-rlSatelliteXmlRpcFrontendRun "auth.login.py $SATELLITE_LOGIN $SATELLITE_PASSWORD"
+rlSatelliteXmlRpcFrontendRun "auth.login.py"
 
 # Expect the session key of length 36
 rlAssertGrep "[a-z0-9]\{36\}" "$rlRun_LOG"
