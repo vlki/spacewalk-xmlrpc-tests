@@ -6,8 +6,10 @@
 # For further information see enclosed LICENSE file
 #
 # Python script calling the XML-RPC auth.login of local Spacewalk server.
+# If both username and password are omitted, default satellite login and
+# password is used.
 # Usage:
-#   ./auth.login.py [-d optional_duration] username password
+#   ./auth.login.py [-d optional_duration] [username password]
 #
 # Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
 #
@@ -15,13 +17,14 @@
 import sys
 import xmlrpclib
 import getopt
+from frontend import client, satelliteLogin, satellitePassword
 
 def main(argv):
     """
     The main function called when this script is executed.
     """
-    username = None
-    password = None
+    username = satelliteLogin
+    password = satellitePassword
     duration = None
 
     try:
@@ -35,19 +38,18 @@ def main(argv):
             # duration should be Integer param
             duration = int(arg)
     
-    if len(args) != 2:
+    if len(args) != 2 and len(args) != 0:
         usage()
         sys.exit(2)
     
-    username = args[0]
-    password = args[1]
-
-    server = xmlrpclib.ServerProxy('http://localhost/rpc/api')
+    if len(args) == 2: 
+        username = args[0]
+        password = args[1]
 
     if duration is None:
-        session_key = server.auth.login(username, password)
+        session_key = client.auth.login(username, password)
     else:
-        session_key = server.auth.login(username, password, duration)
+        session_key = client.auth.login(username, password, duration)
 
     print(session_key)
 
@@ -56,9 +58,11 @@ def usage():
     Prints the usage information.
     """
     print("Python script calling the XML-RPC auth.login of local Spacewalk server.")
+    print("If both username and password are omitted, default satellite login and")
+    print("password is used.")
     print("")
     print("Usage:")
-    print(" ./auth.login.py [-d optional_duration] username password")
+    print(" ./auth.login.py [-d optional_duration] [username password]")
     print("")
 
     

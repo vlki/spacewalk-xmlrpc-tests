@@ -1,0 +1,13 @@
+[Satellite]
+
+# The host of the Satellite server without scheme (protocol)
+#
+# Example for http://spacewalk.example.com/:
+#   host: spacewalk.example.com
+host: localhost
+
+# The login to the administrator account
+login: admin
+
+# The password to the administrator account
+password: redhat
