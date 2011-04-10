@@ -19,10 +19,10 @@
   <property name="rhn.jar.final.dir" location="rhn_jar_final" />
 
   <!-- Name of the jar file after successful instrumentation -->
-  <property name="rhn.jar.instr" location="rhn.cobertura.jar" />
+  <property name="rhn.jar.instr.name" location="rhn.cobertura.jar" />
 
   <!-- Name of the original jar file -->
-  <property name="rhn.jar.original" location="rhn.original.jar" />
+  <property name="rhn.jar.original.name" location="rhn.original.jar" />
 
   <!-- Name of the Cobertura data file -->
   <property name="cobertura.datafile" location="cobertura.ser" />
@@ -54,6 +54,10 @@ symlink-cobertura-to-tomcat,copy-cobertura-datafile,restart-tomcat"
           description="Instruments the classes of unpacked rhn.jar"
           depends="-require-classes-dir">
     
+    <delete quiet="true">
+      <fileset file="${cobertura.datafile}" />
+    </delete>
+   
     <cobertura-instrument todir="${rhn.jar.instr.dir}">
       <!-- NOTE: asm.jar and asm-tree.jar must be explicitly loaded as they 
                  are not in /etc/ant.d/cobertura -->
@@ -94,7 +98,10 @@ symlink-cobertura-to-tomcat,copy-cobertura-datafile,restart-tomcat"
   <target name="replace"
           description="Replaces the original rhn.jar with the instrumented one"
           >
-    <copy file="${rhn.jar.instr}" tofile="${rhn.jar.path}" overwrite="true" />
+    <move file="${rhn.jar.path}" tofile="/usr/share/rhn/lib/rhn.original.jar" />
+    <copy file="${rhn.jar.instr}" tofile="/usr/share/rhn/lib/rhn.cobertura.jar" />
+    <symlink link="${rhn.jar.path}"
+             resource="/usr/share/rhn/lib/rhn.cobertura.jar" />
   </target>
 
   <target name="copy-cobertura-datafile">
