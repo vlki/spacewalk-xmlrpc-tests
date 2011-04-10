@@ -4,11 +4,6 @@
   Spacewalk's XML-RPC test suite.
   </description>
 
-  <!-- Server and admin's credentials used during testing -->
-  <property name="admin.username" value="admin" />
-  <property name="admin.password" value="admin" />
-  <property name="server.host" value="localhost" />
-
   <!-- Path to rhn.jar containing the Java application -->
   <property name="rhn.jar.path" location="/usr/share/rhn/lib/rhn.jar" />
 
