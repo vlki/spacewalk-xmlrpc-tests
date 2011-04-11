@@ -5,4 +5,4 @@ if [[ $( /usr/bin/id -u ) -ne 0 ]]; then
     exit
 fi 
 
-ant install
+ant uninstall
