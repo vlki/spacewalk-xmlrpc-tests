@@ -1,0 +1,7 @@
+PURPOSE of /RHNSatellite/BackendAPI/registration/welcome_message
+Description: Test of XML-RPC backend API call registration.welcome_message
+Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
+
+This is a test of XML-RPC backend API call registration.welcome_message.
+It tests the proper response of Satellite server when welcome message
+is requested.

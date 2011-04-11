@@ -12,7 +12,7 @@ import os
 import ConfigParser
 import xmlrpclib
 
-configPath = "../../conf/xmlrpc_frontend.cfg"
+configPath = "../../conf/xmlrpc.cfg"
 configAbsPath = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), configPath))
 
 config = ConfigParser.RawConfigParser()

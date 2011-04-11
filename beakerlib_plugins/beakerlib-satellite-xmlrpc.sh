@@ -45,6 +45,24 @@ __INTERNAL_LogAndJournalFail() {
     rljAddTest "$1 $2" "FAIL"
 }
 
+__INTERNAL_SatelliteXmlRpcRun() {
+    local scriptName=$( cut -d" " -f1 <<< $2 )
+    local scriptExpanded=""
+    local basePath="$SATELLITE_XMLRPC_SCRIPTS/$1"
+    
+    if [ -e "$basePath/$SATELLITE_VERSION/$scriptName" ]; then
+        scriptExpanded="$basePath/$SATELLITE_VERSION/$2"
+    else
+        scriptExpanded="$basePath/$2"
+    fi
+
+    # resolve the absolute path
+    scriptExpanded=$( readlink -f "$scriptExpanded" )
+
+    rlRun -s -l -t "$scriptExpanded" 0
+    return 0
+}
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # rlSatelliteXmlRpcFrontendRun                                                                 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -74,21 +92,39 @@ Returns 0 and asserts PASS if the return value of script is 0 (FAIL otherwise).
 =cut
 
 rlSatelliteXmlRpcFrontendRun(){
-    local scriptName=$( cut -d" " -f1 <<< $1 )
-    local scriptExpanded=""
-    local basePath="$SATELLITE_XMLRPC_SCRIPTS/frontend"
-    
-    if [ -e "$basePath/$SATELLITE_VERSION/$scriptName" ]; then
-        scriptExpanded="$basePath/$SATELLITE_VERSION/$1"
-    else
-        scriptExpanded="$basePath/$1"
-    fi
+    __INTERNAL_SatelliteXmlRpcRun "frontend" $1
+}
 
-    # resolve the absolute path
-    scriptExpanded=$( readlink -f "$scriptExpanded" )
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# rlSatelliteXmlRpcBackendRun                                                                 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+: <<=cut                                                                       
+=pod                                                                           
 
-    rlRun -s -l -t "$scriptExpanded" 0
-    return 0
+=head3 rlSatelliteXmlRpcBackendRun
+
+Run the given XML-RPC script from library (actual path is affected by version
+of RHN Satellite) against Satellite backend API.
+
+    rlSatelliteXmlRpcBackendRun script
+
+Output of the script is accessible in file of name specified in $rlRun_LOG 
+variable. Caller is responsible for removing the file.
+
+=over
+
+=item script
+
+The script which should be run from library, e.g. "registration.welcome_message.py".
+
+=back
+
+Returns 0 and asserts PASS if the return value of script is 0 (FAIL otherwise).
+
+=cut
+
+rlSatelliteXmlRpcBackendRun(){
+    __INTERNAL_SatelliteXmlRpcRun "backend" $1
 }
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
