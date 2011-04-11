@@ -34,7 +34,7 @@
   <!-- ##### TARGETS ##### -->
 
   <target name="install" 
-          depends="unjar,instrument,merge,jar,replace,
+          depends="unjar,instrument,merge,jar,replace,readable-httpd-logs,
 symlink-cobertura-to-tomcat,copy-cobertura-datafile,restart-tomcat"
           description=
           "Runs the sequence of targets to setup the system for tests"
@@ -110,6 +110,16 @@ symlink-cobertura-to-tomcat,copy-cobertura-datafile,restart-tomcat"
            perm="ugo+rx" />
     <chmod file="/usr/share/tomcat6/cobertura.ser"
            perm="ugo+rwx" />
+  </target>
+
+  <target name="readable-httpd-logs"
+          description="Chmods the httpd log directory to be readable by all">
+    
+    <!-- Make readable the directory -->
+    <chmod dir="/var/log/httpd" perm="ugo+rx" />
+
+    <!-- As well as all files inside -->
+    <chmod dir="/var/log/httpd" perm="ugo+r" includes="*" />
   </target>
 
   <target name="symlink-cobertura-to-tomcat"

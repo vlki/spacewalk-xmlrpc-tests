@@ -29,11 +29,15 @@ rlJournalStart
 # ===================================================================
 rlPhaseStartTest "Testing registration.welcome_message without lang"
 
+rlSatelliteSaveHttpdErrorLog
+
 rlSatelliteXmlRpcBackendRun "registration.welcome_message.py"
 
 # Assert that result is not empty
 rlAssertGrep ".\+" "$rlRun_LOG"
 rlRun "rm -f $rlRun_LOG"
+
+rlSatelliteAssertHttpdErrorLogNotDiffer
 
 rlPhaseEnd
 

@@ -27,6 +27,7 @@ RHN Satellite server.
 =cut
 
 Tomcat6LogFile="/var/log/tomcat6/catalina.out"
+HttpdErrorLogFile="/var/log/httpd/error_log"
 
 # TODO: which path is default?
 SATELLITE_XMLRPC_SCRIPTS=${SATELLITE_XMLRPC_SCRIPTS:-"/some/default/path"}
@@ -63,6 +64,30 @@ __INTERNAL_SatelliteXmlRpcRun() {
     return 0
 }
 
+__INTERNAL_AssertLogNotDiffer(){
+    if [ ! -e "$1" ]; then
+        __INTERNAL_LogAndJournalFail "__INTERNAL_AssertLogNotDiffer cannot assert because log has not been probably saved before"
+        return 1
+    fi 
+
+    AdditionTmpFile=$( mktemp )
+
+    # Get just the new lines and strip the ">  " prefix
+    diff "$1" "$2" | grep "^> " | cut -c 3- > "$AdditionTmpFile"
+
+    # if addition is not empty
+    if [ -s "$AdditionTmpFile" ]; then
+        __INTERNAL_LogAndJournalFail "$3"
+        rlLog "`cat $AdditionTmpFile`"
+        return 1
+    fi
+    
+    rm -f $AdditionTmpFile
+
+    __INTERNAL_LogAndJournalPass "$3"
+    return 0
+}
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # rlSatelliteXmlRpcFrontendRun                                                                 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -93,6 +118,8 @@ Returns 0 and asserts PASS if the return value of script is 0 (FAIL otherwise).
 
 rlSatelliteXmlRpcFrontendRun(){
     __INTERNAL_SatelliteXmlRpcRun "frontend" $1
+
+    return $?
 }
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -125,6 +152,8 @@ Returns 0 and asserts PASS if the return value of script is 0 (FAIL otherwise).
 
 rlSatelliteXmlRpcBackendRun(){
     __INTERNAL_SatelliteXmlRpcRun "backend" $1
+
+    return $?
 }
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -135,8 +164,22 @@ rlSatelliteSaveTomcat6Log(){
     rlRun "Tomcat6LogSaved=\`mktemp\`" 0 \
           "Creating the temporary file for tomcat6 log file"
     rlRun "cat $Tomcat6LogFile > $Tomcat6LogSaved" 0 \
-          "Storing the contents of tomcat6 log file"
+          "Storing the contents of $Tomcat6LogFile"
     export Tomcat6LogSaved
+
+    return 0
+}
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# rlSatelliteSaveHttpdErrorLog
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+rlSatelliteSaveHttpdErrorLog(){
+    rlRun "HttpdErrorLogSaved=\`mktemp\`" 0 \
+          "Creating the temporary file for httpd error log file"
+    rlRun "cat $HttpdErrorLogFile > $HttpdErrorLogSaved" 0 \
+          "Storing the contents of $HttpdErrorLogFile"
+    export HttpdErrorLogSaved
 
     return 0
 }
@@ -146,28 +189,23 @@ rlSatelliteSaveTomcat6Log(){
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 rlSatelliteAssertTomcat6LogNotDiffer(){
-    if [ ! -e "$Tomcat6LogSaved" ]; then
-        __INTERNAL_LogAndJournalFail "rlSatelliteAssertTomcat6LogNotDiffer cannot assert because log has not been probably saved before"
-        return 1
-    fi 
+    __INTERNAL_AssertLogNotDiffer "$Tomcat6LogSaved" "$Tomcat6LogFile" \
+        "There should not be any addition to tomcat6 log"
 
-    AdditionTmpFile=$( mktemp )
-
-    # Get just the new lines and strip the ">  " prefix
-    diff "$Tomcat6LogSaved" "$Tomcat6LogFile" | grep "^> " | cut -c 3- > "$AdditionTmpFile"
-
-    local msg="There should not be any addition to tomcat6 log"
-   
-    # if addition is not empty
-    if [ -s "$AdditionTmpFile" ]; then
-        __INTERNAL_LogAndJournalFail "$msg"
-        rlLog "`cat $AdditionTmpFile`"
-        return 1
-    fi
-
-    __INTERNAL_LogAndJournalPass "$msg"
-    return 0
+    return $?
 }
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# rlSatelliteAssertHttpdErrorLogNotDiffer
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+rlSatelliteAssertHttpdErrorLogNotDiffer(){
+    __INTERNAL_AssertLogNotDiffer "$HttpdErrorLogSaved" "$HttpdErrorLogFile" \
+        "There should not be any addition to httpd error log"
+
+    return $?
+}
+
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # AUTHORS
