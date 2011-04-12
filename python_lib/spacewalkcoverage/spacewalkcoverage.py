@@ -7,19 +7,20 @@ class InvalidStateError(Exception):
     """
     pass
 
-class Coverage():
+class SpacewalkCoverage():
     """
-    The Coverage class wrapping the setup and calls of coverage module.
+    The SpacewalkCoverage class wrapping the setup and calls of coverage
+    module.
     """
 
-    def __init__():
+    def __init__(self):
         """
         Initializes the Coverage object. In order to start the measurements,
         method start must be called.
         """
         self.cov = None
 
-    def start():
+    def start(self):
         """
         Starts new coverage session. If there are any data in datafile,
         they will be erased.
@@ -31,7 +32,7 @@ class Coverage():
         self.cov.erase()
         self.cov.start()
 
-    def continue():
+    def continueStart(self):
         """
         Continues in coverage session. It means that if there is a datafile,
         its data will be read and combined with current coverage measurements.
@@ -52,7 +53,7 @@ class Coverage():
 
         return coverage.coverage(data_file=dataFilePath, cover_pylib=True, source=sourceModules)
         
-    def stop():
+    def stop(self):
         """
         Stops the coverage measurements and saves collected data into datafile.
         """
