@@ -4,6 +4,11 @@
   Spacewalk's XML-RPC test suite.
   </description>
 
+
+
+
+  <!-- ##### SETTINGS ##### -->
+
   <!-- Path to rhn.jar containing the Java application -->
   <property name="rhn.jar.path" location="/usr/share/rhn/lib/rhn.jar" />
   
@@ -15,23 +20,57 @@
   <property name="rhn.jar.original.path"
             location="/usr/share/rhn/lib/rhn.original.jar" />
 
-  <!-- Name of the Cobertura data file -->
-  <property name="cobertura.datafile" location="cobertura.ser" />
+  <!-- Path where the Cobertura data file is stored by tomcat6 service -->
+  <property name="cobertura.datafile.tomcat6.path" location="/usr/share/tomcat6/cobertura.ser" />
 
-  <!-- Path to the tomcat service -->
+  <!-- Path where the Cobertura data file will be stored -->
+  <property name="cobertura.datafile.path" location="/var/opt/spacewalk-xmlrpc-tests/java.coverage.datafile" />
+  <property name="cobertura.emptydatafile.path" location="/var/opt/spacewalk-xmlrpc-tests/java.coverage.empty.datafile" />
+
+  <!-- Paths to the services -->
   <property name="service.tomcat" location="/etc/init.d/tomcat6" />
+  <property name="service.httpd" location="/etc/init.d/httpd" />
+
+  <!-- Path to the real variable data directory -->
+  <property name="real.var.dir" location="/opt/spacewalk-xmlrpc-tests/var" />
+
+  <!-- Path to the Httpd's WSGI conf -->
+  <property name="python.wsgi.conf.path" location="/etc/httpd/conf.d/zz-spacewalk-server-wsgi.conf" />
+
+  <!-- Path to the Python modules needed for coverage measurement -->
+  <property name="python.lib.path" location="/opt/spacewalk-xmlrpc-tests/python_lib" />
+
+  <!-- Path to the WSGI handler of the xmlrpc requests -->
+  <property name="python.wsgi.xmlrpc.handler.path" location="/opt/spacewalk-xmlrpc-tests/python_lib/spacewalkcoverage/wsgi/xmlrpc.py" />
+
+
+
+
+
+  <!-- ##### ADDITIONAL TASKS ##### -->
 
   <!-- Define the Cobertura instrument task -->
   <taskdef name="cobertura-instrument"
            classname="net.sourceforge.cobertura.ant.InstrumentTask" />
+
+
   
 
   
-  <!-- ##### TARGETS ##### -->
+  <!-- ##### MAIN TARGETS ##### -->
 
-  <target name="install" 
-          depends="backup-original,instrument,readable-httpd-logs,symlink-cobertura-to-tomcat"
-          description="Does needed changes to setup the system for tests">
+  <target name="install" depends="symlink-var-dir,install-java,install-python" />
+
+  <target name="uninstall" depends="uninstall-java,uninstall-python" />
+
+
+
+
+  <!-- ##### JAVA-RELATED TARGETS ##### -->
+
+  <target name="install-java" 
+          depends="backup-original-rhn-jar,instrument-java,symlink-cobertura-to-tomcat"
+          description="Does needed changes to setup the Java code for tests">
 
     <exec executable="${service.tomcat}">
       <arg value="stop" />
@@ -48,7 +87,7 @@
     </exec>
   </target>
 
-  <target name="uninstall"
+  <target name="uninstall-java"
           description="Rollbacks the changes done in install"
           depends="-check-original-rhn-jar"
           if="rhn.jar.original.present">
@@ -71,14 +110,14 @@
     </exec>
   </target>
 
-  <target name="backup-original"
+  <target name="backup-original-rhn-jar"
           depends="-check-original-rhn-jar"
           unless="rhn.jar.original.present" >
 
     <copy file="${rhn.jar.path}" tofile="${rhn.jar.original.path}" />    
   </target>
 
-  <target name="instrument" 
+  <target name="instrument-java" 
           description="Instruments the classes of unpacked rhn.jar"
           depends="-check-instrumented-rhn-jar"
           unless="rhn.jar.instr.present" >
@@ -94,7 +133,7 @@
 
     <unjar src="${rhn.jar.original.path}" dest="${instrument.classes.dir}" />
 
-    <cobertura-instrument todir="${instrument.classes.dir}">
+    <cobertura-instrument todir="${instrument.classes.dir}" datafile="${cobertura.datafile.path}">
       <!-- NOTE: asm.jar and asm-tree.jar must be explicitly loaded as they 
                  are not in /etc/ant.d/cobertura -->
       <classpath location="/usr/share/java/objectweb-asm/asm.jar" />
@@ -111,19 +150,72 @@
     <delete quiet="true" includeemptydirs="true">
       <fileset dir="${instrument.classes.dir}" />
     </delete>
+
+    <!-- Backup the empty datafile -->
+    <copy file="${cobertura.datafile.path}"
+          tofile="${cobertura.emptydatafile.path}"
+          overwrite="true" />
+
+    <!-- Remove possible previous cobertura data file ... -->
+    <delete quiet="true">
+      <fileset file="${cobertura.datafile.tomcat6.path}" />
+    </delete>
+
+    <!-- ... and symlink it to our var directory -->
+    <symlink link="${cobertura.datafile.tomcat6.path}" resource="${cobertura.datafile.path}" />
+
+    <!-- Finally set permissions for all to write -->
+    <chmod perm="ugo+rw" file="${cobertura.datafile.path}" />
+    <chmod perm="ugo+rw" file="${cobertura.emptydatafile.path}" />
   </target>
 
-  <target name="copy-cobertura-datafile">
-    <copy file="${cobertura.datafile}"
-          tofile="/usr/share/tomcat6/cobertura.default.ser"
+  <target name="symlink-cobertura-to-tomcat"
+          description="Setups the Tomcat server to load Cobertura's jar"
+          depends="-check-tomcat-cobertura-jar"
+          unless="tomcat.cobertura.jar.present"> 
+    <symlink link="/usr/share/java/tomcat6/cobertura.jar"
+             resource="/usr/share/java/cobertura.jar"
+             failonerror="false" />
+  </target>
+
+
+
+  
+  <!-- ##### PYTHON-RELATED TARGETS -->
+
+  <target name="install-python"
+          depends="backup-python-wsgi-conf,readable-httpd-logs">
+    <!-- Copy back the original conf file -->
+    <copy file="${python.wsgi.conf.path}-backup" tofile="${python.wsgi.conf.path}" />
+
+    <!-- Update the PythonPath line with python lib -->
+    <exec executable="sed" output="${python.wsgi.conf.path}">
+      <arg value='s|^\(.*WSGIPythonPath[^"]*"\)\([^"]*\)\(".*\)$|\1\2:${python.lib.path}\3|' />
+      <arg value="${python.wsgi.conf.path}" />
+    </exec>
+
+    <!-- Update the ScriptAlias /XMLRPC line with our handler -->
+    <exec executable="sed" output="${python.wsgi.conf.path}">
+      <arg value='s|^\(.*WSGIScriptAlias.*/XMLRPC\).*$|\1 ${python.wsgi.xmlrpc.handler.path}|' />
+      <arg value="${python.wsgi.conf.path}" />
+    </exec>
+
+    <!-- Restart Httpd server -->
+    <exec executable="${service.httpd}">
+      <arg value="restart" />
+    </exec>
+  </target>
+
+  <target name="uninstall-python">
+    <move file="${python.wsgi.conf.path}-backup"
+          tofile="${python.wsgi.conf.path}"
           overwrite="true" />
-    <copy file="${cobertura.datafile}"
-          tofile="/usr/share/tomcat6/cobertura.ser"
-          overwrite="true" />
-    <chmod file="/usr/share/tomcat6/cobertura.default.ser"
-           perm="ugo+rx" />
-    <chmod file="/usr/share/tomcat6/cobertura.ser"
-           perm="ugo+rwx" />
+  </target>
+
+  <target name="backup-python-wsgi-conf"
+          depends="-check-python-wsgi-conf-backup"
+          unless="python.wsgi.conf.backup.present">
+    <copy file="${python.wsgi.conf.path}" tofile="${python.wsgi.conf.path}-backup" />
   </target>
 
   <target name="readable-httpd-logs"
@@ -136,23 +228,17 @@
     <chmod dir="/var/log/httpd" perm="ugo+r" includes="*" />
   </target>
 
-  <target name="symlink-cobertura-to-tomcat"
-          description="Setups the Tomcat server to load Cobertura's jar"
-          depends="-check-tomcat-cobertura-jar"
-          unless="tomcat.cobertura.jar.present"> 
-    <symlink link="/usr/share/java/tomcat6/cobertura.jar"
-             resource="/usr/share/java/cobertura.jar"
-             failonerror="false" />
-  </target>
 
-  <target name="clean" description="Clean the temporary directories and files">
-    <delete quiet="true" includeemptydirs="true">
-      <fileset file="${cobertura.datafile}" />
-    </delete>
-  </target>
 
   
   <!-- ##### HELPER TARGETS ##### -->
+
+  <target name="symlink-var-dir"
+          depends="-check-var-dir"
+          unless="var.dir.present">
+    <symlink link="/var/opt/spacewalk-xmlrpc-tests" resource="${real.var.dir}" />
+    <chmod dir="${real.var.dir}" perm="ugo+rw" />
+  </target>
 
   <target name="-check-tomcat-cobertura-jar">
     <available file="/usr/share/java/tomcat6/cobertura.jar"
@@ -167,6 +253,16 @@
   <target name="-check-original-rhn-jar">
     <available file="${rhn.jar.original.path}"
                property="rhn.jar.original.present" />
+  </target>
+
+  <target name="-check-var-dir">
+    <available file="/var/opt/spacewalk-xmlrpc-tests"
+               property="var.dir.present" />
+  </target>
+
+  <target name="-check-python-wsgi-conf-backup">
+    <available file="${python.wsgi.conf.path}-backup"
+               property="python.wsgi.conf.backup.present" /> 
   </target>
 
 </project>
