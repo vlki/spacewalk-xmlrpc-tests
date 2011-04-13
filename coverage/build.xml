@@ -24,24 +24,24 @@
   <property name="cobertura.datafile.tomcat6.path" location="/usr/share/tomcat6/cobertura.ser" />
 
   <!-- Path where the Cobertura data file will be stored -->
-  <property name="cobertura.datafile.path" location="/var/opt/spacewalk-xmlrpc-tests/java.coverage.datafile" />
-  <property name="cobertura.emptydatafile.path" location="/var/opt/spacewalk-xmlrpc-tests/java.coverage.empty.datafile" />
+  <property name="cobertura.datafile.path" location="/var/opt/spacewalk-xmlrpc-tests/coverage/java.coverage.datafile" />
+  <property name="cobertura.emptydatafile.path" location="/var/opt/spacewalk-xmlrpc-tests/coverage/java.coverage.empty.datafile" />
 
   <!-- Paths to the services -->
   <property name="service.tomcat" location="/etc/init.d/tomcat6" />
   <property name="service.httpd" location="/etc/init.d/httpd" />
 
   <!-- Path to the real variable data directory -->
-  <property name="real.var.dir" location="/opt/spacewalk-xmlrpc-tests/var" />
+  <property name="real.coverage.var.dir" location="/opt/spacewalk-xmlrpc-tests/coverage/var" />
 
   <!-- Path to the Httpd's WSGI conf -->
   <property name="python.wsgi.conf.path" location="/etc/httpd/conf.d/zz-spacewalk-server-wsgi.conf" />
 
   <!-- Path to the Python modules needed for coverage measurement -->
-  <property name="python.lib.path" location="/opt/spacewalk-xmlrpc-tests/python_lib" />
+  <property name="python.lib.path" location="/opt/spacewalk-xmlrpc-tests/coverage/python_lib" />
 
   <!-- Path to the WSGI handler of the xmlrpc requests -->
-  <property name="python.wsgi.xmlrpc.handler.path" location="/opt/spacewalk-xmlrpc-tests/python_lib/spacewalkcoverage/wsgi/xmlrpc.py" />
+  <property name="python.wsgi.xmlrpc.handler.path" location="/opt/spacewalk-xmlrpc-tests/coverage/python_lib/spacewalkcoverage/wsgi/xmlrpc.py" />
 
 
 
@@ -234,10 +234,11 @@
   <!-- ##### HELPER TARGETS ##### -->
 
   <target name="symlink-var-dir"
-          depends="-check-var-dir"
-          unless="var.dir.present">
-    <symlink link="/var/opt/spacewalk-xmlrpc-tests" resource="${real.var.dir}" />
-    <chmod dir="${real.var.dir}" perm="ugo+rw" />
+          depends="-check-coverage-var-dir"
+          unless="coverage.var.dir.present">
+    <mkdir dir="/var/opt/spacewalk-xmlrpc-tests" />
+    <symlink link="/var/opt/spacewalk-xmlrpc-tests/coverage" resource="${real.coverage.var.dir}" />
+    <chmod dir="${real.coverage.var.dir}" perm="ugo+rw" />
   </target>
 
   <target name="-check-tomcat-cobertura-jar">
@@ -255,9 +256,9 @@
                property="rhn.jar.original.present" />
   </target>
 
-  <target name="-check-var-dir">
-    <available file="/var/opt/spacewalk-xmlrpc-tests"
-               property="var.dir.present" />
+  <target name="-check-coverage-var-dir">
+    <available file="/var/opt/spacewalk-xmlrpc-tests/coverage"
+               property="coverage.var.dir.present" />
   </target>
 
   <target name="-check-python-wsgi-conf-backup">

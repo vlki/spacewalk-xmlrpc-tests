@@ -1,2 +1,2 @@
-conf/xmlrpc.cfg
-var/*
+tests/conf/xmlrpc.cfg
+coverage/var/*

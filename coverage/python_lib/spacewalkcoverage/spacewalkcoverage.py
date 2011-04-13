@@ -48,7 +48,7 @@ class SpacewalkCoverage():
         """
         Creates the coverage object.
         """
-        dataFilePath = "/var/opt/spacewalk-xmlrpc-tests/python.coverage.datafile"
+        dataFilePath = "/var/opt/spacewalk-xmlrpc-tests/coverage/python.coverage.datafile"
         sourceModules = ["spacewalk", "server"]
 
         return coverage.coverage(data_file=dataFilePath, cover_pylib=True, source=sourceModules)
