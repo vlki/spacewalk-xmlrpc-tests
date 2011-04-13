@@ -1,5 +1,7 @@
 
+import os
 import coverage
+import ConfigParser
 
 class InvalidStateError(Exception):
     """
@@ -15,30 +17,26 @@ class SpacewalkCoverage():
 
     def __init__(self):
         """
-        Initializes the Coverage object. In order to start the measurements,
-        method start must be called.
+        Initializes the Coverage object and loads the configuration. 
+        In order to start the measurements, method start must be called.
         """
+        configPath = "../../conf/python_coverage.properties"
+        configAbsPath = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), configPath))
+
+        config = ConfigParser.RawConfigParser()
+        config.read(configAbsPath)
+
+        self.datafilePath = config.get('PythonCoverage', 'datafile.path')
+
         self.cov = None
 
     def start(self):
         """
-        Starts new coverage session. If there are any data in datafile,
-        they will be erased.
+        Starts coverage session. If there are any data in datafile, they
+        will be loaded and combined with current coverage measurements.
         """
         if self.cov is not None:
             raise InvalidStateError("Cannot start coverage. It has been probably started before.")
-
-        self.cov = self._createCov()
-        self.cov.erase()
-        self.cov.start()
-
-    def continueStart(self):
-        """
-        Continues in coverage session. It means that if there is a datafile,
-        its data will be read and combined with current coverage measurements.
-        """
-        if self.cov is not None:
-            raise InvalidStateError("Cannot continue coverage. It has been probably started before.")
 
         self.cov = self._createCov()
         self.cov.load()
@@ -48,10 +46,9 @@ class SpacewalkCoverage():
         """
         Creates the coverage object.
         """
-        dataFilePath = "/var/opt/spacewalk-xmlrpc-tests/coverage/python.coverage.datafile"
         sourceModules = ["spacewalk", "server"]
 
-        return coverage.coverage(data_file=dataFilePath, cover_pylib=True, source=sourceModules)
+        return coverage.coverage(data_file=self.datafilePath, cover_pylib=True, source=sourceModules)
         
     def stop(self):
         """

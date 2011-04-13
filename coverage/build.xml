@@ -34,16 +34,8 @@
   <!-- Path to the real variable data directory -->
   <property name="real.coverage.var.dir" location="/opt/spacewalk-xmlrpc-tests/coverage/var" />
 
-  <!-- Path to the Httpd's WSGI conf -->
-  <property name="python.wsgi.conf.path" location="/etc/httpd/conf.d/zz-spacewalk-server-wsgi.conf" />
-
-  <!-- Path to the Python modules needed for coverage measurement -->
-  <property name="python.lib.path" location="/opt/spacewalk-xmlrpc-tests/coverage/python_lib" />
-
-  <!-- Path to the WSGI handler of the xmlrpc requests -->
-  <property name="python.wsgi.xmlrpc.handler.path" location="/opt/spacewalk-xmlrpc-tests/coverage/python_lib/spacewalkcoverage/wsgi/xmlrpc.py" />
-
-
+  <!-- Load Python coverage properties -->
+  <property file="${basedir}/conf/python_coverage.properties" prefix="python" />
 
 
 
@@ -104,6 +96,10 @@
 
     <!-- Move the original jar back to its place -->
     <move file="${rhn.jar.original.path}" tofile="${rhn.jar.path}" />
+
+    <delete quiet="true">
+      <fileset file="${cobertura.datafile.tomcat6.path}" />
+    </delete>
 
     <exec executable="${service.tomcat}">
       <arg value="start" />
@@ -166,7 +162,6 @@
 
     <!-- Finally set permissions for all to write -->
     <chmod perm="ugo+rw" file="${cobertura.datafile.path}" />
-    <chmod perm="ugo+rw" file="${cobertura.emptydatafile.path}" />
   </target>
 
   <target name="symlink-cobertura-to-tomcat"
@@ -187,7 +182,7 @@
           depends="backup-python-wsgi-conf,readable-httpd-logs">
     <!-- Copy back the original conf file -->
     <copy file="${python.wsgi.conf.path}-backup" tofile="${python.wsgi.conf.path}" />
-
+    
     <!-- Update the PythonPath line with python lib -->
     <exec executable="sed" output="${python.wsgi.conf.path}">
       <arg value='s|^\(.*WSGIPythonPath[^"]*"\)\([^"]*\)\(".*\)$|\1\2:${python.lib.path}\3|' />
@@ -196,9 +191,18 @@
 
     <!-- Update the ScriptAlias /XMLRPC line with our handler -->
     <exec executable="sed" output="${python.wsgi.conf.path}">
-      <arg value='s|^\(.*WSGIScriptAlias.*/XMLRPC\).*$|\1 ${python.wsgi.xmlrpc.handler.path}|' />
+      <arg value='s|^\(.*WSGIScriptAlias.*/XMLRPC\).*$|\1 ${python.wsgi.handler.xmlrpc.path}|' />
       <arg value="${python.wsgi.conf.path}" />
     </exec>
+
+    <!-- Create the empty data file (just an empty file) and default data file -->
+    <delete quiet="true">
+      <fileset file="${python.emptydatafile.path}" />
+      <fileset file="${python.datafile.path}" />
+    </delete>
+    <touch file="${python.emptydatafile.path}" />
+    <touch file="${python.datafile.path}" />
+    <chmod perm="ugo+rw" file="${python.datafile.path}" />
 
     <!-- Restart Httpd server -->
     <exec executable="${service.httpd}">
