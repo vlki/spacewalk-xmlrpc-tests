@@ -13,4 +13,14 @@ RPMs:
 * ant-nodeps
 * cobertura
 * beakerlib
+* python-coverage
 
+Installation
+------------
+
+Just run `sudo ./install.sh`. It will prepare the system for measuring the coverage of Python and Java codebase.
+
+Uninstallation
+--------------
+
+Run `sudo ./uninstall.sh`. It will rollback changes made during installation.
