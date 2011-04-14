@@ -1,8 +1,18 @@
 #
+# Copyright (c) 2011, Jan Vlcek
+# All rights reserved.
 #
+# For further information see enclosed LICENSE file.
 #
+
 #
+# The configuration of the coverage installation and collecting.
+# 
+# NOTE: Since it is loaded both by Ant and Python (PythonConfig), it has
+# to have the section header (eg. [global]) and you cannot use any expanding
+# references to other settings as the format differs.
 #
+# Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
 #
 
 [global]
