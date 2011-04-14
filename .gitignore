@@ -1,3 +1,3 @@
 tests/conf/xmlrpc.cfg
 coverage/var/*
-coverage/conf/python_coverage.properties
+coverage/conf/coverage.properties

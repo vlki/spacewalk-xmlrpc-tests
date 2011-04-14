@@ -1,0 +1,66 @@
+#
+#
+#
+#
+#
+#
+
+[global]
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Global coverage settings
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# The path to the coverage variable data real directory where will
+# be symlinked the /var/opt/spacewalk-xmlrpc-tests/coverage directory
+real.coverage.var.dir=/opt/spacewalk-xmlrpc-tests/coverage/var
+
+# The services settings
+service.tomcat6=/etc/init.d/tomcat6
+service.httpd=/etc/init.d/httpd
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Python coverage settings
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# The path to the empty coverage.py data file
+python.emptydatafile.path=/var/opt/spacewalk-xmlrpc-tests/coverage/python.coverage.empty.datafile
+
+# The path to the coverage.py data file used during collecting
+python.datafile.path=/var/opt/spacewalk-xmlrpc-tests/coverage/python.coverage.datafile
+
+# The path to the Python lib extending the base python PATH
+python.lib.path=/opt/spacewalk-xmlrpc-tests/coverage/python_lib
+
+# The path to the Httpd's WSGI configuration file
+python.wsgi.conf.path=/etc/httpd/conf.d/zz-spacewalk-server-wsgi.conf
+
+# The path to the WSGI handler of the XML-RPC requests
+python.wsgi.handler.xmlrpc.path=/opt/spacewalk-xmlrpc-tests/coverage/python_lib/spacewalkcoverage/wsgi/xmlrpc.py
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Java coverage settings
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# The path to the rhn.jar loaded by tomcat6 server
+java.rhn.jar.path=/usr/share/rhn/lib/rhn.jar
+
+# The path to the rhn.jar after instrumentation
+java.rhn.jar.instr.path=/usr/share/rhn/lib/rhn.cobertura.jar
+
+# The path to the backuped rhn.jar
+java.rhn.jar.backup.path=/usr/share/rhn/lib/rhn.backup.jar
+
+# The path where the Cobertura data file is stored by tomcat6 server
+# when some coverage data are collected
+java.cobertura.datafile.tomcat6.path=/usr/share/tomcat6/cobertura.ser
+
+# The path where the Cobertura data file will be stored
+java.datafile.path=/var/opt/spacewalk-xmlrpc-tests/coverage/java.coverage.datafile
+
+# The path where the empty Cobertura data file will be stored
+# Emptiness means that the data file does not contain any coverage data yet
+java.emptydatafile.path=/var/opt/spacewalk-xmlrpc-tests/coverage/java.coverage.empty.datafile
+

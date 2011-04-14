@@ -1,45 +1,11 @@
 <project name="spacewalk-xmlrpc-tests" default="install" basedir=".">
   <description>
   Build file used for installation and setup of the 
-  Spacewalk's XML-RPC test suite.
+  coverage part of Spacewalk XML-RPC test suite.
   </description>
 
-
-
-
-  <!-- ##### SETTINGS ##### -->
-
-  <!-- Path to rhn.jar containing the Java application -->
-  <property name="rhn.jar.path" location="/usr/share/rhn/lib/rhn.jar" />
-  
-  <!-- Path to the jar file after successful instrumentation -->
-  <property name="rhn.jar.instr.path"
-            location="/usr/share/rhn/lib/rhn.cobertura.jar" />
-
-  <!-- Path to the original jar file -->
-  <property name="rhn.jar.original.path"
-            location="/usr/share/rhn/lib/rhn.original.jar" />
-
-  <!-- Path where the Cobertura data file is stored by tomcat6 service -->
-  <property name="cobertura.datafile.tomcat6.path" location="/usr/share/tomcat6/cobertura.ser" />
-
-  <!-- Path where the Cobertura data file will be stored -->
-  <property name="cobertura.datafile.path" location="/var/opt/spacewalk-xmlrpc-tests/coverage/java.coverage.datafile" />
-  <property name="cobertura.emptydatafile.path" location="/var/opt/spacewalk-xmlrpc-tests/coverage/java.coverage.empty.datafile" />
-
-  <!-- Paths to the services -->
-  <property name="service.tomcat" location="/etc/init.d/tomcat6" />
-  <property name="service.httpd" location="/etc/init.d/httpd" />
-
-  <!-- Path to the real variable data directory -->
-  <property name="real.coverage.var.dir" location="/opt/spacewalk-xmlrpc-tests/coverage/var" />
-
-  <!-- Load Python coverage properties -->
-  <property file="${basedir}/conf/python_coverage.properties" prefix="python" />
-
-
-
-  <!-- ##### ADDITIONAL TASKS ##### -->
+  <!-- Load coverage properties -->
+  <property file="${basedir}/conf/coverage.properties" />
 
   <!-- Define the Cobertura instrument task -->
   <taskdef name="cobertura-instrument"
@@ -64,17 +30,17 @@
           depends="backup-original-rhn-jar,instrument-java,symlink-cobertura-to-tomcat"
           description="Does needed changes to setup the Java code for tests">
 
-    <exec executable="${service.tomcat}">
+    <exec executable="${service.tomcat6}">
       <arg value="stop" />
     </exec>
 
     <delete quiet="true">
-      <fileset file="${rhn.jar.path}" />
+      <fileset file="${java.rhn.jar.path}" />
     </delete>
     
-    <symlink link="${rhn.jar.path}" resource="${rhn.jar.instr.path}" />
+    <symlink link="${java.rhn.jar.path}" resource="${java.rhn.jar.instr.path}" />
 
-    <exec executable="${service.tomcat}">
+    <exec executable="${service.tomcat6}">
       <arg value="start" />
     </exec>
   </target>
@@ -84,24 +50,24 @@
           depends="-check-original-rhn-jar"
           if="rhn.jar.original.present">
    
-    <exec executable="${service.tomcat}">
+    <exec executable="${service.tomcat6}">
       <arg value="stop" />
     </exec>
  
     <!-- Remove the symlink and instrumented jar -->
     <delete quiet="true">
-      <fileset file="${rhn.jar.path}" />
-      <fileset file="${rhn.jar.instr.path}" />
+      <fileset file="${java.rhn.jar.path}" />
+      <fileset file="${java.rhn.jar.instr.path}" />
     </delete>
 
     <!-- Move the original jar back to its place -->
-    <move file="${rhn.jar.original.path}" tofile="${rhn.jar.path}" />
+    <move file="${java.rhn.jar.backup.path}" tofile="${java.rhn.jar.path}" />
 
     <delete quiet="true">
-      <fileset file="${cobertura.datafile.tomcat6.path}" />
+      <fileset file="${java.cobertura.datafile.tomcat6.path}" />
     </delete>
 
-    <exec executable="${service.tomcat}">
+    <exec executable="${service.tomcat6}">
       <arg value="start" />
     </exec>
   </target>
@@ -110,7 +76,7 @@
           depends="-check-original-rhn-jar"
           unless="rhn.jar.original.present" >
 
-    <copy file="${rhn.jar.path}" tofile="${rhn.jar.original.path}" />    
+    <copy file="${java.rhn.jar.path}" tofile="${java.rhn.jar.backup.path}" />    
   </target>
 
   <target name="instrument-java" 
@@ -127,9 +93,9 @@
       <arg value="-d" />
     </exec>
 
-    <unjar src="${rhn.jar.original.path}" dest="${instrument.classes.dir}" />
+    <unjar src="${java.rhn.jar.backup.path}" dest="${instrument.classes.dir}" />
 
-    <cobertura-instrument todir="${instrument.classes.dir}" datafile="${cobertura.datafile.path}">
+    <cobertura-instrument todir="${instrument.classes.dir}" datafile="${java.datafile.path}">
       <!-- NOTE: asm.jar and asm-tree.jar must be explicitly loaded as they 
                  are not in /etc/ant.d/cobertura -->
       <classpath location="/usr/share/java/objectweb-asm/asm.jar" />
@@ -140,7 +106,7 @@
       </fileset>
     </cobertura-instrument>
 
-    <jar destfile="${rhn.jar.instr.path}" basedir="${instrument.classes.dir}" />
+    <jar destfile="${java.rhn.jar.instr.path}" basedir="${instrument.classes.dir}" />
 
     <!-- Delete the temporary directory -->
     <delete quiet="true" includeemptydirs="true">
@@ -148,20 +114,20 @@
     </delete>
 
     <!-- Backup the empty datafile -->
-    <copy file="${cobertura.datafile.path}"
-          tofile="${cobertura.emptydatafile.path}"
+    <copy file="${java.datafile.path}"
+          tofile="${java.emptydatafile.path}"
           overwrite="true" />
 
     <!-- Remove possible previous cobertura data file ... -->
     <delete quiet="true">
-      <fileset file="${cobertura.datafile.tomcat6.path}" />
+      <fileset file="${java.cobertura.datafile.tomcat6.path}" />
     </delete>
 
     <!-- ... and symlink it to our var directory -->
-    <symlink link="${cobertura.datafile.tomcat6.path}" resource="${cobertura.datafile.path}" />
+    <symlink link="${java.cobertura.datafile.tomcat6.path}" resource="${java.datafile.path}" />
 
     <!-- Finally set permissions for all to write -->
-    <chmod perm="ugo+rw" file="${cobertura.datafile.path}" />
+    <chmod perm="ugo+rw" file="${java.datafile.path}" />
   </target>
 
   <target name="symlink-cobertura-to-tomcat"
@@ -251,12 +217,12 @@
   </target>
 
   <target name="-check-instrumented-rhn-jar">
-    <available file="${rhn.jar.instr.path}"
+    <available file="${java.rhn.jar.instr.path}"
                property="rhn.jar.instr.present" />
   </target>
 
   <target name="-check-original-rhn-jar">
-    <available file="${rhn.jar.original.path}"
+    <available file="${java.rhn.jar.backup.path}"
                property="rhn.jar.original.present" />
   </target>
 

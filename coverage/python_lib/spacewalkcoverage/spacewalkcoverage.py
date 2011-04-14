@@ -20,13 +20,13 @@ class SpacewalkCoverage():
         Initializes the Coverage object and loads the configuration. 
         In order to start the measurements, method start must be called.
         """
-        configPath = "../../conf/python_coverage.properties"
+        configPath = "../../conf/coverage.properties"
         configAbsPath = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), configPath))
 
         config = ConfigParser.RawConfigParser()
         config.read(configAbsPath)
 
-        self.datafilePath = config.get('PythonCoverage', 'datafile.path')
+        self.datafilePath = config.get('global', 'python.datafile.path')
 
         self.cov = None
 
