@@ -1,3 +1,15 @@
+#
+# Copyright (c) 2011, Jan Vlcek
+# All rights reserved.
+#
+# For further information see enclosed LICENSE file.
+#
+"""
+
+The wrapper of RHN Satellite/Spacewalk's WSGI handler adding 
+the coverage collecting functionality.
+
+"""
 
 import sys
 import os

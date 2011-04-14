@@ -1,3 +1,15 @@
+#
+# Copyright (c) 2011, Jan Vlcek
+# All rights reserved.
+#
+# For further information see enclosed LICENSE file.
+#
+"""
+
+This module provides the SpacewalkCoverage class wrapping the setup of 
+the coverage module for use with Spacewalk handlers.
+
+"""
 
 import os
 import coverage

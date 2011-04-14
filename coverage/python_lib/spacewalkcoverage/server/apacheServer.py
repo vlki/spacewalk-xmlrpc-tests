@@ -1,6 +1,15 @@
 #
+# Copyright (c) 2011, Jan Vlcek
+# All rights reserved.
 #
+# For further information see enclosed LICENSE file.
 #
+"""
+
+The wrapper of the RHN Satellite/Spacewalk's mod_python handler
+adding the coverage collecting functionality.
+
+"""
 
 from spacewalkcoverage.spacewalkcoverage import SpacewalkCoverage
 
