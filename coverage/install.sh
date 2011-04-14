@@ -5,4 +5,4 @@ if [[ $( /usr/bin/id -u ) -ne 0 ]]; then
     exit
 fi 
 
-ant -f coverage/build.xml install
+ant -f $( dirname $0 )/build.xml install
