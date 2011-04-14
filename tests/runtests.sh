@@ -1,4 +1,17 @@
 #!/bin/bash
+#
+# Copyright (c) 2011, Jan Vlcek
+# All rights reserved.
+#
+# For further information see enclosed LICENSE file.
+#
+
+#
+# The script used for running all the BeakerLib tests which reside
+# in the RHNSatellite directory and evaluating the success.
+#
+# Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
+#
 
 TESTS_MODULE_DIR=$( dirname $0 )
 BEAKERLIB_TESTS_DIR="$TESTS_MODULE_DIR/RHNSatellite"
