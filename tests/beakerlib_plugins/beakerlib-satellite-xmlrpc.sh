@@ -159,6 +159,18 @@ rlSatelliteXmlRpcBackendRun(){
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # rlSatelliteSaveTomcat6Log
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+: <<=cut                                                                       
+=pod                                                                           
+
+=head3 rlSatelliteSaveTomcat6Log
+
+Backups the tomcat6 catalina.out log file into temporary file and sets the
+variable $Tomcat6LogSaved to the name of that temporary file. Therefore
+the caller is then responsible of removing it.
+
+Returns 0.
+
+=cut
 
 rlSatelliteSaveTomcat6Log(){
     rlRun "Tomcat6LogSaved=\`mktemp\`" 0 \
@@ -173,6 +185,18 @@ rlSatelliteSaveTomcat6Log(){
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # rlSatelliteSaveHttpdErrorLog
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+: <<=cut                                                                       
+=pod                                                                           
+
+=head3 rlSatelliteSaveHttpdErrorLog
+
+Backups the httpd error_log log file into temporary file and sets the
+variable $HttpdErrorLogSaved to the name of that temporary file. Therefore
+the caller is then responsible of removing it.
+
+Returns 0.
+
+=cut
 
 rlSatelliteSaveHttpdErrorLog(){
     rlRun "HttpdErrorLogSaved=\`mktemp\`" 0 \
@@ -187,6 +211,18 @@ rlSatelliteSaveHttpdErrorLog(){
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # rlSatelliteAssertTomcat6LogNotDiffer
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+: <<=cut                                                                       
+=pod                                                                           
+
+=head3 rlSatelliteAssertTomcat6LogNotDiffer
+
+Assertion checking that the previously saved tomcat6 catalina.out log file 
+does not differ from the current one. The previously saved log file name is
+expected to be in $Tomcat6LogSaved variable.
+
+Returns 0 and asserts PASS when log files does not differ.
+
+=cut
 
 rlSatelliteAssertTomcat6LogNotDiffer(){
     __INTERNAL_AssertLogNotDiffer "$Tomcat6LogSaved" "$Tomcat6LogFile" \
@@ -198,6 +234,18 @@ rlSatelliteAssertTomcat6LogNotDiffer(){
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # rlSatelliteAssertHttpdErrorLogNotDiffer
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+: <<=cut                                                                       
+=pod                                                                           
+
+=head3 rlSatelliteAssertHttpdErrorLogNotDiffer
+
+Assertion checking that the previously saved httpd error_log log file 
+does not differ from the current one. The previously saved log file name is
+expected to be in $HttpdErrorLogSaved variable.
+
+Returns 0 and asserts PASS when log files does not differ.
+
+=cut
 
 rlSatelliteAssertHttpdErrorLogNotDiffer(){
     __INTERNAL_AssertLogNotDiffer "$HttpdErrorLogSaved" "$HttpdErrorLogFile" \
