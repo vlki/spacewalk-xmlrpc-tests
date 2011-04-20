@@ -44,7 +44,10 @@ Then just run `sudo ./coverage/install.sh`. It will prepare the system for measu
 
 ### Running the tests with coverage ###
 
-In order to see coverage of the tests execute `./coverage/runtests.sh`. It will run all the tests in the tests module and evaluate the coverage.
+In order to see coverage of the tests execute `sudo ./coverage/runtests.sh`. It will run all the tests in the tests module and evaluate the coverage.
+
+The reason, why it needs to be run as root, is that Java coverage tool Cobertura writes into coverage data file only on server halt.
+And root privileges are needed for tomcat service restart.
 
 ### Uninstallation ###
 
