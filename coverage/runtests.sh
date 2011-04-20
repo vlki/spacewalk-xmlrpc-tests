@@ -14,6 +14,11 @@
 # Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
 #
 
+if [[ $(/usr/bin/id -u ) -ne 0 ]]; then
+    echo "Must be run as root"
+    exit
+fi
+
 COVERAGE_DIR=$( dirname $0 )
 COVERAGE_SCRIPTS_DIR=$COVERAGE_DIR/scripts
 COVERAGE_VAR_DIR=$( ./$COVERAGE_SCRIPTS_DIR/get_coverage_var_dir.py )
@@ -42,6 +47,9 @@ if [ -f $PYTHON_COVERAGE_DATAFILE ]; then
 else
   pythonCoverage=0
 fi
+
+# Restart the tomcat server in order to save coverage data into datafile
+/etc/init.d/tomcat6 restart > /dev/null
 
 
 echo "Branch coverage: Java 50%, Python $pythonCoverage%"
