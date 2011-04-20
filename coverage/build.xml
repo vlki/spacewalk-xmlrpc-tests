@@ -30,9 +30,9 @@ Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
   
   <!-- ##### MAIN TARGETS ##### -->
 
-  <target name="install" depends="symlink-var-dir,install-java,install-python" />
+  <target name="install" depends="create-coverage-var-dir,install-java,install-python" />
 
-  <target name="uninstall" depends="uninstall-java,uninstall-python" />
+  <target name="uninstall" depends="uninstall-java,uninstall-python,delete-coverage-var-dir" />
 
 
 
@@ -174,14 +174,10 @@ Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
       <arg value="${python.wsgi.conf.path}" />
     </exec>
 
-    <!-- Create the empty data file (just an empty file) and default data file -->
+    <!-- Delete the possibly existing data file -->
     <delete quiet="true">
-      <fileset file="${python.emptydatafile.path}" />
       <fileset file="${python.datafile.path}" />
     </delete>
-    <touch file="${python.emptydatafile.path}" />
-    <touch file="${python.datafile.path}" />
-    <chmod perm="ugo+rw" file="${python.datafile.path}" />
 
     <!-- Restart Httpd server -->
     <exec executable="${service.httpd}">
@@ -216,12 +212,15 @@ Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
   
   <!-- ##### HELPER TARGETS ##### -->
 
-  <target name="symlink-var-dir"
-          depends="-check-coverage-var-dir"
-          unless="coverage.var.dir.present">
-    <mkdir dir="/var/opt/spacewalk-xmlrpc-tests" />
-    <symlink link="/var/opt/spacewalk-xmlrpc-tests/coverage" resource="${real.coverage.var.dir}" />
-    <chmod dir="${real.coverage.var.dir}" perm="ugo+rw" />
+  <target name="create-coverage-var-dir">
+    <mkdir dir="${coverage.var.dir}" />
+    <chmod dir="${coverage.var.dir}" perm="a+rwx" />
+  </target>
+
+  <target name="delete-coverage-var-dir">
+    <delete quiet="true" includeemptydirs="true">
+      <fileset dir="${coverage.var.dir}" />
+    </delete>
   </target>
 
   <target name="-check-tomcat-cobertura-jar">
@@ -237,11 +236,6 @@ Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
   <target name="-check-original-rhn-jar">
     <available file="${java.rhn.jar.backup.path}"
                property="rhn.jar.original.present" />
-  </target>
-
-  <target name="-check-coverage-var-dir">
-    <available file="/var/opt/spacewalk-xmlrpc-tests/coverage"
-               property="coverage.var.dir.present" />
   </target>
 
   <target name="-check-python-wsgi-conf-backup">

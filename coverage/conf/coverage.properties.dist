@@ -21,9 +21,8 @@
 # Global coverage settings
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# The path to the coverage variable data real directory where will
-# be symlinked the /var/opt/spacewalk-xmlrpc-tests/coverage directory
-real.coverage.var.dir=/opt/spacewalk-xmlrpc-tests/coverage/var
+# The path to the coverage variable data real directory
+coverage.var.dir=/var/opt/spacewalk-xmlrpc-tests
 
 # The services settings
 service.tomcat6=/etc/init.d/tomcat6
@@ -34,11 +33,8 @@ service.httpd=/etc/init.d/httpd
 # Python coverage settings
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# The path to the empty coverage.py data file
-python.emptydatafile.path=/var/opt/spacewalk-xmlrpc-tests/coverage/python.coverage.empty.datafile
-
 # The path to the coverage.py data file used during collecting
-python.datafile.path=/var/opt/spacewalk-xmlrpc-tests/coverage/python.coverage.datafile
+python.datafile.path=/var/opt/spacewalk-xmlrpc-tests/python.coverage.datafile
 
 # The path to the Python lib extending the base python PATH
 python.lib.path=/opt/spacewalk-xmlrpc-tests/coverage/python_lib
@@ -68,9 +64,9 @@ java.rhn.jar.backup.path=/usr/share/rhn/lib/rhn.backup.jar
 java.cobertura.datafile.tomcat6.path=/usr/share/tomcat6/cobertura.ser
 
 # The path where the Cobertura data file will be stored
-java.datafile.path=/var/opt/spacewalk-xmlrpc-tests/coverage/java.coverage.datafile
+java.datafile.path=/var/opt/spacewalk-xmlrpc-tests/java.coverage.datafile
 
 # The path where the empty Cobertura data file will be stored
 # Emptiness means that the data file does not contain any coverage data yet
-java.emptydatafile.path=/var/opt/spacewalk-xmlrpc-tests/coverage/java.coverage.empty.datafile
+java.emptydatafile.path=/var/opt/spacewalk-xmlrpc-tests/java.coverage.empty.datafile
 

@@ -12,6 +12,7 @@ the coverage module for use with Spacewalk handlers.
 """
 
 import os
+import getpass
 import coverage
 import ConfigParser
 
@@ -37,9 +38,8 @@ class SpacewalkCoverage():
 
         config = ConfigParser.RawConfigParser()
         config.read(configAbsPath)
-
+       
         self.datafilePath = config.get('global', 'python.datafile.path')
-
         self.cov = None
 
     def start(self):
@@ -49,19 +49,17 @@ class SpacewalkCoverage():
         """
         if self.cov is not None:
             raise InvalidStateError("Cannot start coverage. It has been probably started before.")
+        
+        # "touch" the data file and set write permissions for everyone
+        open(self.datafilePath, "w").close()
+        os.chmod(self.datafilePath, 0777)
 
-        self.cov = self._createCov()
+        sourceModules = ["spacewalk", "server"]
+        
+        self.cov = coverage.coverage(data_file=self.datafilePath, cover_pylib=True, source=sourceModules)
         self.cov.load()
         self.cov.start()
 
-    def _createCov(self):
-        """
-        Creates the coverage object.
-        """
-        sourceModules = ["spacewalk", "server"]
-
-        return coverage.coverage(data_file=self.datafilePath, cover_pylib=True, source=sourceModules)
-        
     def stop(self):
         """
         Stops the coverage measurements and saves collected data into datafile.
