@@ -59,7 +59,7 @@ class SpacewalkCoverage():
         sourceModules = ["spacewalk", "server"]
         
         self.cov = coverage.coverage(data_file=self.datafilePath, 
-                                     cover_pylib=True, source=sourceModules
+                                     cover_pylib=True, source=sourceModules,
                                      branch=True)
         self.cov.load()
         self.cov.start()

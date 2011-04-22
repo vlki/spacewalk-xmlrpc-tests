@@ -48,20 +48,6 @@ do
 done
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Functions
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-#
-# Fetches the branch coverage from xml report file specified by given path.
-# The branch coverage is number in range 0..100 inclusive.
-#
-function fetchBranchCoverage {
-    branchCoverage=$( "$COVERAGE_SCRIPTS_DIR/fetch_branch_coverage.py" "$1" )
-
-    return $branchCoverage
-}
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Tests setup
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -131,8 +117,7 @@ if [ -f $PYTHON_COVERAGE_DATAFILE ]; then
         exit 1
     fi
 
-    fetchBranchCoverage "$xmlReportPath"
-    pythonCoverage=$?
+    pythonCoverage=$( "$COVERAGE_SCRIPTS_DIR/fetch_branch_coverage.py" "$xmlReportPath" )
 
     # Remove the temporary file
     rm -f "$xmlReportPath"
@@ -166,8 +151,7 @@ if [ -f $JAVA_COVERAGE_DATAFILE ]; then
 
     xmlReportPath="/tmp/coverage.xml"
 
-    fetchBranchCoverage "$xmlReportPath"
-    javaCoverage=$?
+    javaCoverage=$( "$COVERAGE_SCRIPTS_DIR/fetch_branch_coverage.py" "$xmlReportPath" )
 
     # Remove the temporary file
     rm -f "$xmlReportPath"
