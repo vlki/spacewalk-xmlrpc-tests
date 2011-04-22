@@ -34,6 +34,7 @@ RPMs:
 * ant-nodeps
 * cobertura
 * python-coverage
+* python-lxml
 
 ### Installation ###
 
