@@ -50,6 +50,12 @@ In order to see coverage of the tests execute `sudo ./coverage/runtests.sh`. It 
 The reason, why it needs to be run as root, is that Java coverage tool Cobertura writes into coverage data file only on server halt.
 And root privileges are needed for tomcat service restart.
 
+### Evaluating the coverage without tests ###
+
+There might be a need to evaluate coverage of non-test actions. For example some interactions with Spacewalk's frontend using browser.
+
+In this case call `sudo ./coverage/reset.sh` to reset the data files, do the stuff and then get the coverage by calling `sudo ./coverage/evaluate.sh`.
+
 ### Uninstallation ###
 
 Run `sudo ./coverage/uninstall.sh`. It will rollback changes made during installation.
