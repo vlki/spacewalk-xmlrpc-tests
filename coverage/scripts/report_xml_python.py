@@ -15,14 +15,16 @@
 import sys
 import coverage
 import tempfile
-import re
 import os
-from xml.dom import minidom
 
-def main(argv):
+def main(scriptName, argv):
     if len(argv) != 1:
         usage()
         sys.exit(1)
+
+    if not os.path.exists(argv[0]):
+        print(scriptName + ": Given data file does not exist.")
+        exit(1)
 
     # Load the coverage.py data file
     cov = coverage.coverage(data_file=argv[0])
@@ -30,22 +32,18 @@ def main(argv):
 
     # Generate the report into temporary file
     reportFileDescriptor, reportFilePath = tempfile.mkstemp()
-    reportFile = os.fdopen(reportFileDescriptor, "w")
-    cov.report(file=reportFile)
-    reportFile.close()
-    
-    # Get the coverage value
-    reportFile = open(reportFilePath, "r")
-    for line in reportFile:
-       match = re.search("TOTAL.*(\d+)%", line)
-       if match:
-            print(match.group(1))
-    
-    # Remove the temporary file
-    os.remove(reportFilePath)
+    try:
+        cov.xml_report(outfile=reportFilePath)
+    except coverage.misc.CoverageException as e:
+        print(scriptName + ": Cannot generate report. Given data file is probably broken.")
+        exit(1)
+
+    # Return the path to the temporary file
+    print(reportFilePath)
+    exit(0)    
 
 def usage():
     pass
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main("report_xml_python.py", sys.argv[1:])

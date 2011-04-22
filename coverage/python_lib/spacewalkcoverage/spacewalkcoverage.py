@@ -34,7 +34,8 @@ class SpacewalkCoverage():
         In order to start the measurements, method start must be called.
         """
         configPath = "../../conf/coverage.properties"
-        configAbsPath = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), configPath))
+        configAbsPath = os.path.abspath(os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), configPath))
 
         config = ConfigParser.RawConfigParser()
         config.read(configAbsPath)
@@ -48,7 +49,8 @@ class SpacewalkCoverage():
         will be loaded and combined with current coverage measurements.
         """
         if self.cov is not None:
-            raise InvalidStateError("Cannot start coverage. It has been probably started before.")
+            raise InvalidStateError(
+                "Cannot start coverage. It has been probably started before.")
         
         # "touch" the data file and set write permissions for everyone
         open(self.datafilePath, "w").close()
@@ -56,7 +58,9 @@ class SpacewalkCoverage():
 
         sourceModules = ["spacewalk", "server"]
         
-        self.cov = coverage.coverage(data_file=self.datafilePath, cover_pylib=True, source=sourceModules)
+        self.cov = coverage.coverage(data_file=self.datafilePath, 
+                                     cover_pylib=True, source=sourceModules
+                                     branch=True)
         self.cov.load()
         self.cov.start()
 
@@ -65,7 +69,8 @@ class SpacewalkCoverage():
         Stops the coverage measurements and saves collected data into datafile.
         """
         if self.cov is None:
-            raise InvalidStateError("Cannot stop coverage. It has not been probably started yet.")
+            raise InvalidStateError(
+                "Cannot stop coverage. It has not been probably started yet.")
 
         self.cov.stop()
         self.cov.save()

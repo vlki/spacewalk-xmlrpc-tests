@@ -1,0 +1,39 @@
+<!--
+Copyright (c) 2011, Jan Vlcek
+All rights reserved.
+
+For further information see enclosed LICENSE file.
+-->
+<!--
+TODO: edit
+The ant configuration file capable of installation and uninstallation 
+of everything needed to collect the coverage data of RHN Satellite/Spacewalk
+server.
+
+Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
+-->
+<project name="spacewalk-xmlrpc-tests-java-coverage-evaluation" default="evaluate" basedir=".">
+  <description>
+  <!-- TODO: write ... -->
+  </description>
+
+  <!-- Define the Cobertura report task -->
+  <taskdef name="cobertura-report"
+           classname="net.sourceforge.cobertura.ant.ReportTask" />
+
+
+  <target name="evaluate">
+    <fail message="Please provide java.datafile.path property."
+          unless="java.datafile.path" />
+   
+    <cobertura-report format="xml" destdir="/tmp"
+                      datafile="${java.datafile.path}"
+                      srcdir=".">
+      <!-- NOTE: asm.jar and asm-tree.jar must be explicitly loaded as they 
+                 are not in /etc/ant.d/cobertura -->
+      <classpath location="/usr/share/java/objectweb-asm/asm.jar" />
+      <classpath location="/usr/share/java/objectweb-asm/asm-tree.jar" />
+    </cobertura-report>
+  </target>
+
+</project>
