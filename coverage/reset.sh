@@ -19,10 +19,12 @@
 
 COVERAGE_DIR=$( readlink -f $( dirname $0 ) )
 COVERAGE_SCRIPTS_DIR=$COVERAGE_DIR/scripts
-COVERAGE_VAR_DIR=$( $COVERAGE_SCRIPTS_DIR/get_coverage_var_dir.py )
-JAVA_COVERAGE_DATAFILE=$COVERAGE_VAR_DIR/java.coverage.datafile
-PYTHON_COVERAGE_DATAFILE=$COVERAGE_VAR_DIR/python.coverage.datafile
-JAVA_COVERAGE_EMPTY_DATAFILE=$COVERAGE_VAR_DIR/java.coverage.empty.datafile
+COVERAGE_CONFIG_SCRIPT="$COVERAGE_SCRIPTS_DIR/get_coverage_config_value.py"
+COVERAGE_VAR_DIR=$( "$COVERAGE_CONFIG_SCRIPT" "coverage.var.dir" )
+JAVA_COVERAGE_DATAFILE=$( "$COVERAGE_CONFIG_SCRIPT" "java.datafile.path" )
+PYTHON_COVERAGE_DATAFILE=$( "$COVERAGE_CONFIG_SCRIPT" "python.datafile.path" )
+JAVA_COVERAGE_EMPTY_DATAFILE=$( "$COVERAGE_CONFIG_SCRIPT" \
+                                "java.emptydatafile.path" )
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Do the reset

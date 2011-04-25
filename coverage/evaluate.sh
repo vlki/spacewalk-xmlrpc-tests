@@ -25,16 +25,18 @@ fi
 
 COVERAGE_DIR=$( readlink -f $( dirname $0 ) )
 COVERAGE_SCRIPTS_DIR=$COVERAGE_DIR/scripts
-COVERAGE_VAR_DIR=$( $COVERAGE_SCRIPTS_DIR/get_coverage_var_dir.py )
-JAVA_COVERAGE_DATAFILE=$COVERAGE_VAR_DIR/java.coverage.datafile
-PYTHON_COVERAGE_DATAFILE=$COVERAGE_VAR_DIR/python.coverage.datafile
+COVERAGE_CONFIG_SCRIPT="$COVERAGE_SCRIPTS_DIR/get_coverage_config_value.py"
+COVERAGE_VAR_DIR=$( "$COVERAGE_CONFIG_SCRIPT" "coverage.var.dir" )
+JAVA_COVERAGE_DATAFILE=$( "$COVERAGE_CONFIG_SCRIPT" "java.datafile.path" )
+PYTHON_COVERAGE_DATAFILE=$( "$COVERAGE_CONFIG_SCRIPT" "python.datafile.path" )
+SERVICE_TOMCAT=$( "$COVERAGE_CONFIG_SCRIPT" "service.tomcat6" )
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Tomcat restart
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Restart the tomcat server in order to save Cobertura's data into data file
-/etc/init.d/tomcat6 restart > /dev/null
+$SERVICE_TOMCAT restart > /dev/null
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Evaluate the Python coverage
