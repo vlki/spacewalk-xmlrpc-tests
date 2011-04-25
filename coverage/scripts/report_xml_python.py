@@ -7,7 +7,9 @@
 #
 
 #
-# Script evaluating the coverage.py data file for the coverage of code.
+# Script evaluating the coverage.py data file and generating the XML
+# report into temporary file. The path to that temporary file is 
+# then printed.
 # 
 # Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
 #
@@ -18,6 +20,9 @@ import tempfile
 import os
 
 def main(scriptName, argv):
+    """
+    The main script function.
+    """
     if len(argv) != 1:
         usage()
         sys.exit(1)
@@ -43,6 +48,16 @@ def main(scriptName, argv):
     exit(0)    
 
 def usage():
+    """
+    Prints the usage information.
+    """
+    print("Script evaluating the coverage.py data file and generating the XML")
+    print("report into temporary file. The path to that temporary file is")
+    print("then printed.")
+    print("")
+    print("Usage:")
+    print(" ./report_xml_python.py coverage-data-file")
+    print("")
     pass
 
 if __name__ == "__main__":

@@ -7,9 +7,8 @@
 #
 
 #
-# This script first cleans all the coverage data collected to start with zero
-# coverage. Then it runs all tests and evaluates the coverage from collected
-# data.
+# This script extends the running of tests from tests module with
+# reseting of coverage data files before and evaluating them after.
 #
 # Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
 #

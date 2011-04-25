@@ -1,9 +1,25 @@
 #!/usr/bin/env python
+#
+# Copyright (c) 2011, Jan Vlcek
+# All rights reserved.
+#
+# For further information see enclosed LICENSE file.
+#
+
+#
+# This script parses the XML coverage report (the Cobertura format) and
+# and fetches the branch coverage out of it.
+#
+# Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
+#
 
 import sys
 from lxml import etree
 
 def main(scriptName, argv):
+    """
+    The main script function.
+    """
     if len(argv) != 1:
         usage()
         exit(1)
@@ -22,6 +38,15 @@ def main(scriptName, argv):
     exit(0)
 
 def usage():
+    """
+    Prints the usage information.
+    """
+    print("This script parses the XML coverage report (the Cobertura format)")
+    print("and fetches the branch coverage out of it.")
+    print("")
+    print("Usage:")
+    print(" ./fetch_branch_coverage.py xml-report-file")
+    print("")
     pass
 
 if __name__ == "__main__":

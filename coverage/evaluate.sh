@@ -7,9 +7,9 @@
 #
 
 #
-# This script first cleans all the coverage data collected to start with zero
-# coverage. Then it runs all tests and evaluates the coverage from collected
-# data.
+# This scripts restarts the tomcat server in order to force Cobertura to
+# flush coverage data into file and then evaluates the both coverage data
+# files for branch coverage.
 #
 # Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
 #

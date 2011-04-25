@@ -5,16 +5,17 @@ All rights reserved.
 For further information see enclosed LICENSE file.
 -->
 <!--
-TODO: edit
-The ant configuration file capable of installation and uninstallation 
-of everything needed to collect the coverage data of RHN Satellite/Spacewalk
-server.
+The ant configuration file capable of generating the XML report out of
+Cobertura coverage data file. The path to it must be provided in
+property java.data.file.
 
 Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
 -->
 <project name="spacewalk-xmlrpc-tests-java-coverage-evaluation" default="evaluate" basedir=".">
   <description>
-  <!-- TODO: write ... -->
+    The ant configuration file capable of generating the XML report out of
+    Cobertura coverage data file. The path to it must be provided in
+    property java.data.file.
   </description>
 
   <!-- Define the Cobertura report task -->
