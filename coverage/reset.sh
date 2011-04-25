@@ -8,16 +8,10 @@
 
 #
 # This script first cleans all the coverage data collected to start with zero
-# coverage. Then it runs all tests and evaluates the coverage from collected
-# data.
+# coverage.
 #
 # Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
 #
-
-if [[ $(/usr/bin/id -u ) -ne 0 ]]; then
-    echo "Must be run as root"
-    exit
-fi
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Constants setting
@@ -28,6 +22,7 @@ COVERAGE_SCRIPTS_DIR=$COVERAGE_DIR/scripts
 COVERAGE_VAR_DIR=$( $COVERAGE_SCRIPTS_DIR/get_coverage_var_dir.py )
 JAVA_COVERAGE_DATAFILE=$COVERAGE_VAR_DIR/java.coverage.datafile
 PYTHON_COVERAGE_DATAFILE=$COVERAGE_VAR_DIR/python.coverage.datafile
+JAVA_COVERAGE_EMPTY_DATAFILE=$COVERAGE_VAR_DIR/java.coverage.empty.datafile
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Do the reset
@@ -36,10 +31,15 @@ PYTHON_COVERAGE_DATAFILE=$COVERAGE_VAR_DIR/python.coverage.datafile
 # Clean the coverage data files
 rm -f "$JAVA_COVERAGE_DATAFILE" "$PYTHON_COVERAGE_DATAFILE"
 
-# TODO: check whether empty data files exist and print pretty message in case of miss
+if [ ! -f "$JAVA_COVERAGE_EMPTY_DATAFILE" ]; then
+    echo -n "The empty Java coverage datafile was not found in path "
+    echo "\"$JAVA_COVERAGE_EMPTY_DATAFILE\""
+    exit 1
+fi
 
 # Copy the empty Java data file and set write permissions
-\cp $COVERAGE_VAR_DIR/java.coverage.empty.datafile "$JAVA_COVERAGE_DATAFILE"
+\cp "$JAVA_COVERAGE_EMPTY_DATAFILE" "$JAVA_COVERAGE_DATAFILE"
 chmod a+rwx "$JAVA_COVERAGE_DATAFILE"
 
 echo "Coverage data file were successfully reset"
+exit 0
