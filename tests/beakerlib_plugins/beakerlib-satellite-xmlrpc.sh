@@ -1,38 +1,43 @@
 #!/bin/bash
+#
+# Copyright (c) 2011, Jan Vlcek
+# All rights reserved.
+# 
+# For further information see enclosed LICENSE file.
+#
 
-# beakerlib-satellite-xmlrpc.sh - BeakerLib extension for RHN Satellite XML-RPC tests
-# Authors: Jan Vlcek <xvlcek03@>
 #
-# Description: Extends BeakerLib with rlSatellite* functions
+# BeakerLib plugin containing functions for easier testing of XML-RPC
+# interface of RHN Satellite/Spacewalk server.
 #
-# TODO: license?
+# Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
+#
 
 : <<=cut
 =pod
 
 =head1 NAME
 
-beakerlib-satellite-xmlrpc.sh - BeakerLib extension for RHN Satellite XML-RPC tests
+beakerlib-satellite-xmlrpc.sh - RHN Satellite/Spacewalk XML-RPC tests
 
 =head1 DESCRIPTION
 
-This file contains functions related directly to testing. These functions are
-non-specialized asserts, as well as several other functions related to testing.  
-
 This file contains functions for easier testing of XML-RPC interface of
-RHN Satellite server.
+RHN Satellite/Spacewalk server.
 
 =head1 FUNCTIONS
 
 =cut
 
-Tomcat6LogFile="/var/log/tomcat6/catalina.out"
-HttpdErrorLogFile="/var/log/httpd/error_log"
+# These can be overriden
+Tomcat6LogFile=${TOMCAT6_LOG_FILE:-"/var/log/tomcat6/catalina.out"}
+HttpdErrorLogFile=${HTTPD_ERROR_LOG_FILE:-"/var/log/httpd/error_log"}
 
-# TODO: which path is default?
-SATELLITE_XMLRPC_SCRIPTS=${SATELLITE_XMLRPC_SCRIPTS:-"/some/default/path"}
+# Default path is the same dir as test
+SATELLITE_XMLRPC_SCRIPTS=${SATELLITE_XMLRPC_SCRIPTS:-"."}
 
-SATELLITE_VERSION=${SATELLITE_VERSION:-"1.2"}
+# Default Spacewalk version is 1.2
+SPACEWALK_VERSION=${SPACEWALK_VERSION:-"1.2"}
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #   Internal Stuff
@@ -51,8 +56,8 @@ __INTERNAL_SatelliteXmlRpcRun() {
     local scriptExpanded=""
     local basePath="$SATELLITE_XMLRPC_SCRIPTS/$1"
     
-    if [ -e "$basePath/$SATELLITE_VERSION/$scriptName" ]; then
-        scriptExpanded="$basePath/$SATELLITE_VERSION/$2"
+    if [ -e "$basePath/$SPACEWALK_VERSION/$scriptName" ]; then
+        scriptExpanded="$basePath/$SPACEWALK_VERSION/$2"
     else
         scriptExpanded="$basePath/$2"
     fi
@@ -254,6 +259,89 @@ rlSatelliteAssertHttpdErrorLogNotDiffer(){
     return $?
 }
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# rlSpacewalkVersionIs
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+: <<=cut                                                                       
+=pod                                                                           
+
+=head3 rlSpacewalkVersionIs
+
+Checks whether the given Spacewalk version is the same as the one of XML-RPC
+interface.
+
+    rlSpacewalkVersionIs version
+
+=over
+
+=item version
+
+The version of the Spacewalk we want to compare with configured one, e.g. "1.2"
+
+=back
+
+Returns 0 if the version is same, 1 if not and 2 in case of error.
+
+=cut
+
+rlSatelliteVersionIs(){
+    if [ "$1" == "" ]; then
+        __INTERNAL_LogAndJournalFail "rlSpacewalkVersionIs needs one parameter -- the version"
+        return 2
+    fi
+
+    if [ $SPACEWALK_VERSION == "$1" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# rlLoadConfigProperty
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+: <<=cut                                                                       
+=pod                                                                           
+
+=head3 rlLoadConfigProperty
+
+Loads the property from config file with format used by Python ConfigParser.
+
+    rlLoadConfigProperty config-file property-name
+
+The value of property is saved into $rlLoadConfigProperty_VALUE variable.
+
+=over
+
+=item config-file
+
+The path to the config file.
+
+=item property-name
+
+The name of the property we want to load.
+
+=back
+
+Returns 1 in case of problem, 0 otherwise.
+
+=cut
+
+rlLoadConfigProperty(){
+    if [ ! -e "$1" ]; then
+        __INTERNAL_LogAndJournalFail "rlLoadConfigProperty cannot find config file \"$1\""
+        return 1
+    fi
+
+    rlLoadConfigProperty_VALUE=$( grep "$2=" "$1" | sed "s/^[^=]\+=\(.*\)$/\1/" | head -n1 )
+
+    if [ -z "$rlLoadConfigProperty_VALUE" ]; then
+        echo "rlLoadConfigProperty the value of property \"$2\" is missing or is empty"
+        return 1
+    fi
+
+    return 0
+}
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # AUTHORS

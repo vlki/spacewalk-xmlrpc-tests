@@ -1,28 +1,24 @@
 #!/bin/bash
+#
+# Copyright (c) 2011, Jan Vlcek
+# All rights reserved.
+# 
+# For further information see enclosed LICENSE file.
+#
 
+#
+# The test of registration.welcome_message backend call
 #
 # Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
 #
 
-# Include the BeakerLib environment with Satellite XML-RPC plugin
-. /usr/share/beakerlib/beakerlib.sh
-. ./../../../../beakerlib_plugins/beakerlib-satellite-xmlrpc.sh
+# Include the common setup
+. ./../../../setup.sh
 
 # Set full test name
 TEST=/auth/login
 
-SATELLITE_XMLRPC_SCRIPTS="./../../../../xmlrpc_scripts"
-
 rlJournalStart
-
-# ===================================================================
-# Setup phase(s)
-# ===================================================================
-# rlPhaseStartSetup "Setup"
-
-# rlPhaseEnd
-
-
 
 # ===================================================================
 # Do the testing
@@ -40,17 +36,6 @@ rlRun "rm -f $rlRun_LOG"
 rlSatelliteAssertHttpdErrorLogNotDiffer
 
 rlPhaseEnd
-
-
-
-# ===================================================================
-# Cleanup phase(s)
-# ===================================================================
-# rlPhaseStartCleanup "Cleanup"
-
-# rlPhaseEnd
-
-
 
 rlJournalEnd
 rlJournalPrintText

@@ -3,7 +3,7 @@
 #
 # For further information see enclosed LICENSE file
 #
-# The common settings of all Satellite XML-RPC backend API calls.
+# The common settings of all Spacewalk XML-RPC backend API calls.
 #
 # Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
 #
@@ -60,6 +60,6 @@ config = ConfigParser.RawConfigParser()
 config.read(configAbsPath)
 
 # Retrieve values from config file
-satelliteHost = config.get('Satellite', 'host')
+spacewalkHost = config.get('global', 'host')
 
-client = xmlrpclib.ServerProxy('http://' + satelliteHost + '/XMLRPC', transport=ZlibTransport())
+client = xmlrpclib.ServerProxy('http://' + spacewalkHost + '/XMLRPC', transport=ZlibTransport())

@@ -1,13 +1,16 @@
-[Satellite]
+[global]
 
-# The host of the Satellite server without scheme (protocol)
+# The host of the Spacewalk server without scheme (protocol)
 #
 # Example for http://spacewalk.example.com/:
 #   host: spacewalk.example.com
-host: localhost
+host=localhost
 
 # The login to the administrator account
-login: admin
+login=admin
 
 # The password to the administrator account
-password: redhat
+password=redhat
+
+# The Spacewalk version
+version=1.2

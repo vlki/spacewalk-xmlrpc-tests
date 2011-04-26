@@ -1,56 +1,41 @@
 #!/bin/bash
+#
+# Copyright (c) 2011, Jan Vlcek
+# All rights reserved.
+# 
+# For further information see enclosed LICENSE file.
+#
 
+#
+# The test of auth.login frontend call
 #
 # Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
 #
 
-# Include the BeakerLib environment with Satellite XML-RPC plugin
-. /usr/share/beakerlib/beakerlib.sh
-. ./../../../../beakerlib_plugins/beakerlib-satellite-xmlrpc.sh
+# Include the common setup
+. ./../../../setup.sh
 
 # Set full test name
 TEST=/auth/login
 
-SATELLITE_XMLRPC_SCRIPTS="./../../../../xmlrpc_scripts"
-
 rlJournalStart
-
-# ===================================================================
-# Setup phase(s)
-# ===================================================================
-# rlPhaseStartSetup "Setup"
-
-# rlPhaseEnd
-
-
 
 # ===================================================================
 # Do the testing
 # ===================================================================
-rlPhaseStartTest "Testing auth.login of default administrator"
+if rlSatelliteVersionIs "1.2"; then
+  rlPhaseStartTest "Testing auth.login of default administrator"
+    rlSatelliteSaveTomcat6Log
 
-rlSatelliteSaveTomcat6Log
+    rlSatelliteXmlRpcFrontendRun "auth.login.py"
 
-rlSatelliteXmlRpcFrontendRun "auth.login.py"
+    # Expect the session key of length 36
+    rlAssertGrep "[a-z0-9]\{36\}" "$rlRun_LOG"
+    rlRun "rm -f $rlRun_LOG"
 
-# Expect the session key of length 36
-rlAssertGrep "[a-z0-9]\{36\}" "$rlRun_LOG"
-rlRun "rm -f $rlRun_LOG"
-
-rlSatelliteAssertTomcat6LogNotDiffer
-
-rlPhaseEnd
-
-
-
-# ===================================================================
-# Cleanup phase(s)
-# ===================================================================
-# rlPhaseStartCleanup "Cleanup"
-
-# rlPhaseEnd
-
-
+    rlSatelliteAssertTomcat6LogNotDiffer
+  rlPhaseEnd
+fi
 
 rlJournalEnd
 rlJournalPrintText

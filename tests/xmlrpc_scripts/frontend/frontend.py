@@ -19,11 +19,11 @@ config = ConfigParser.RawConfigParser()
 config.read(configAbsPath)
 
 # Retrieve values from config file
-satelliteHost = config.get('Satellite', 'host')
-satelliteLogin = config.get('Satellite', 'login')
-satellitePassword = config.get('Satellite', 'password')
+spacewalkHost = config.get('global', 'host')
+spacewalkLogin = config.get('global', 'login')
+spacewalkPassword = config.get('global', 'password')
 
-satelliteFrontendApiUrl = 'http://' + satelliteHost + '/rpc/api'
+spacewalkFrontendApiUrl = 'http://' + spacewalkHost + '/rpc/api'
 
 # Client is available for export
-client = xmlrpclib.ServerProxy(satelliteFrontendApiUrl)
+client = xmlrpclib.ServerProxy(spacewalkFrontendApiUrl)

@@ -5,8 +5,8 @@
 #
 # For further information see enclosed LICENSE file
 #
-# Python script calling the XML-RPC registration.welcome_message of Satellite server's
-# backend API.
+# Python script calling the XML-RPC registration.welcome_message of
+# Spacewalk server's backend API.
 # 
 # Has only one optional parameter -- the language of response.
 #
@@ -38,8 +38,8 @@ def usage():
     """
     Prints the usage information.
     """
-    print("Python script calling the XML-RPC registration.welcome_message of Satellite server's")
-    print("backend API.")
+    print("Python script calling the XML-RPC registration.welcome_message of")
+    print("Spacewalk server's backend API.")
     print("")
     print("Has only one optional parameter -- the language of response.")
     print("")
