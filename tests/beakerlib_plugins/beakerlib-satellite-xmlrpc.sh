@@ -284,7 +284,7 @@ Returns 0 if the version is same, 1 if not and 2 in case of error.
 
 =cut
 
-rlSatelliteVersionIs(){
+rlSpacewalkVersionIs(){
     if [ "$1" == "" ]; then
         __INTERNAL_LogAndJournalFail "rlSpacewalkVersionIs needs one parameter -- the version"
         return 2

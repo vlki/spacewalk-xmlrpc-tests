@@ -23,7 +23,7 @@ rlJournalStart
 # ===================================================================
 # Do the testing
 # ===================================================================
-if rlSatelliteVersionIs "1.2"; then
+if rlSpacewalkVersionIs "1.2"; then
   rlPhaseStartTest "Testing auth.login of default administrator"
     rlSatelliteSaveTomcat6Log
 
