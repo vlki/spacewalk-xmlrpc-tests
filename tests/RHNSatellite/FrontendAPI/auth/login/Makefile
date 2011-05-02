@@ -9,7 +9,7 @@
 TOPLEVEL_NAMESPACE=RHNSatellite
 
 # The name of the package under test:
-PACKAGE_NAME=FrontendAPI
+export PACKAGE=FrontendAPI
 
 # The path of the test below the package:
 RELATIVE_PATH=auth/login
@@ -18,7 +18,7 @@ RELATIVE_PATH=auth/login
 export TESTVERSION=1.0
 
 # The combined namespace of the test.
-export TEST=/$(TOPLEVEL_NAMESPACE)/$(PACKAGE_NAME)/$(RELATIVE_PATH)
+export TEST=/$(TOPLEVEL_NAMESPACE)/$(PACKAGE)/$(RELATIVE_PATH)
 
 
 # A phony target is one that is not really the name of a file.
