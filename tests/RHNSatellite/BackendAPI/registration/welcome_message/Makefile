@@ -9,7 +9,7 @@
 TOPLEVEL_NAMESPACE=RHNSatellite
 
 # The name of the package under test:
-PACKAGE_NAME=BackendAPI
+export PACKAGE=BackendAPI
 
 # The path of the test below the package:
 RELATIVE_PATH=registration/welcome_message
@@ -18,7 +18,7 @@ RELATIVE_PATH=registration/welcome_message
 export TESTVERSION=1.0
 
 # The combined namespace of the test.
-export TEST=/$(TOPLEVEL_NAMESPACE)/$(PACKAGE_NAME)/$(RELATIVE_PATH)
+export TEST=/$(TOPLEVEL_NAMESPACE)/$(PACKAGE)/$(RELATIVE_PATH)
 
 
 # A phony target is one that is not really the name of a file.
@@ -59,9 +59,8 @@ $(METADATA): Makefile
 	@echo "License:       New BSD" >> $(METADATA)
 	@echo "TestVersion:   $(TESTVERSION)" >> $(METADATA)
 	@echo "Description:   Test of XML-RPC backend API call registration.welcome_message " >> $(METADATA)
-	@echo "TestTime:      2m" >> $(METADATA)
+	@echo "TestTime:      30s" >> $(METADATA)
 	@echo "RunFor:        $(PACKAGE_NAME)" >> $(METADATA)
-	@echo "Requires:      spacewalk-backend-tools" >> $(METADATA)
+	@echo "Requires:      " >> $(METADATA)
 	@echo "Architectures: i386 x86_64 s390x s390" >> $(METADATA)
-	@echo "Releases:      -RedHatEnterpriseLinux3" >> $(METADATA)
 	rhts-lint $(METADATA)
