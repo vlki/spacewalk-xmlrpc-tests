@@ -8,10 +8,16 @@
 
 #
 # This script first cleans all the coverage data collected to start with zero
-# coverage.
+# coverage. The tomcat server is restarted because of Cobertura's data which
+# need to be flushed.
 #
 # Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
 #
+
+if [[ $(/usr/bin/id -u ) -ne 0 ]]; then
+    echo "Must be run as root"
+    exit
+fi
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Constants setting
@@ -25,6 +31,14 @@ JAVA_COVERAGE_DATAFILE=$( "$COVERAGE_CONFIG_SCRIPT" "java.datafile.path" )
 PYTHON_COVERAGE_DATAFILE=$( "$COVERAGE_CONFIG_SCRIPT" "python.datafile.path" )
 JAVA_COVERAGE_EMPTY_DATAFILE=$( "$COVERAGE_CONFIG_SCRIPT" \
                                 "java.emptydatafile.path" )
+SERVICE_TOMCAT=$( "$COVERAGE_CONFIG_SCRIPT" "service.tomcat6" )
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Tomcat restart
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Restart the tomcat server in order to flush Cobertura's data into data file
+$SERVICE_TOMCAT restart > /dev/null
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Do the reset

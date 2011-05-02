@@ -45,6 +45,8 @@ python.wsgi.conf.path=/etc/httpd/conf.d/zz-spacewalk-server-wsgi.conf
 # The path to the WSGI handler of the XML-RPC requests
 python.wsgi.handler.xmlrpc.path=/opt/spacewalk-xmlrpc-tests/coverage/python_lib/spacewalkcoverage/wsgi/xmlrpc.py
 
+# The path to the Httpd's mod_python configuration file for backend XML-RPC
+python.modpython.conf.path=/etc/rhn/satellite-httpd/conf/rhn/spacewalk-backend-xmlrpc.conf
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Java coverage settings

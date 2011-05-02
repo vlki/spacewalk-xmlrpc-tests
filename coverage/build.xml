@@ -158,9 +158,12 @@ Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
   <!-- ##### PYTHON-RELATED TARGETS -->
 
   <target name="install-python"
-          depends="backup-python-wsgi-conf,readable-httpd-logs">
+          depends="backup-python-wsgi-conf,backup-python-modpython-conf,readable-httpd-logs">
+    <!-- mod_wsgi first -->
+
     <!-- Copy back the original conf file -->
-    <copy file="${python.wsgi.conf.path}-backup" tofile="${python.wsgi.conf.path}" />
+    <copy file="${python.wsgi.conf.path}-backup"
+          tofile="${python.wsgi.conf.path}" overwrite="true" />
     
     <!-- Update the PythonPath line with python lib -->
     <exec executable="sed" output="${python.wsgi.conf.path}">
@@ -174,6 +177,24 @@ Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
       <arg value="${python.wsgi.conf.path}" />
     </exec>
 
+    <!-- mod_python second -->
+
+    <!-- Copy back the original conf file -->
+    <copy file="${python.modpython.conf.path}-backup"
+          tofile="${python.modpython.conf.path}" overwrite="true" />
+    
+    <!-- Add the PythonPath line with python lib -->
+    <exec executable="sed" output="${python.modpython.conf.path}">
+      <arg value='s|^\(.*SetHandler.*\)|\1\n  PythonPath "sys.path+[&apos;${python.lib.path}&apos;]"|' />
+      <arg value="${python.modpython.conf.path}" />
+    </exec>
+
+    <!-- Update the Python*Handler lines with our path to handlers -->
+    <exec executable="sed" output="${python.modpython.conf.path}">
+      <arg value='s|spacewalk\.server\.apacheServer|spacewalkcoverage.server.apacheServer|' />
+      <arg value="${python.modpython.conf.path}" />
+    </exec> 
+
     <!-- Delete the possibly existing data file -->
     <delete quiet="true">
       <fileset file="${python.datafile.path}" />
@@ -186,15 +207,35 @@ Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
   </target>
 
   <target name="uninstall-python">
+    <!-- Restore configuration -->
     <move file="${python.wsgi.conf.path}-backup"
           tofile="${python.wsgi.conf.path}"
           overwrite="true" />
+    <move file="${python.modpython.conf.path}-backup"
+          tofile="${python.modpython.conf.path}"
+          overwrite="true" />
+
+    <!-- Delete the possibly existing data file -->
+    <delete quiet="true">
+      <fileset file="${python.datafile.path}" />
+    </delete>
+
+    <!-- Restart Httpd server -->
+    <exec executable="${service.httpd}">
+      <arg value="restart" />
+    </exec>
   </target>
 
   <target name="backup-python-wsgi-conf"
           depends="-check-python-wsgi-conf-backup"
           unless="python.wsgi.conf.backup.present">
     <copy file="${python.wsgi.conf.path}" tofile="${python.wsgi.conf.path}-backup" />
+  </target>
+
+  <target name="backup-python-modpython-conf"
+          depends="-check-python-modpython-conf-backup"
+          unless="python.modpython.conf.backup.present">
+    <copy file="${python.modpython.conf.path}" tofile="${python.modpython.conf.path}-backup" />
   </target>
 
   <target name="readable-httpd-logs"
@@ -241,6 +282,11 @@ Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
   <target name="-check-python-wsgi-conf-backup">
     <available file="${python.wsgi.conf.path}-backup"
                property="python.wsgi.conf.backup.present" /> 
+  </target>
+
+  <target name="-check-python-modpython-conf-backup">
+    <available file="${python.modpython.conf.path}-backup"
+               property="python.modpython.conf.backup.present" /> 
   </target>
 
 </project>
