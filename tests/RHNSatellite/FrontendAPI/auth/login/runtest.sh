@@ -15,9 +15,6 @@
 # Include the common setup
 . ./../../../setup.sh
 
-# Set full test name
-TEST=/auth/login
-
 rlJournalStart
 
 # ===================================================================
