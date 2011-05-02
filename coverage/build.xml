@@ -76,8 +76,11 @@ Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
     <!-- Move the original jar back to its place -->
     <move file="${java.rhn.jar.backup.path}" tofile="${java.rhn.jar.path}" />
 
+    <!-- Delete the data files -->
     <delete quiet="true">
       <fileset file="${java.cobertura.datafile.tomcat6.path}" />
+      <fileset file="${java.datafile.path}" />
+      <fileset file="${java.emptydatafile.path}" />
     </delete>
 
     <exec executable="${service.tomcat6}">
