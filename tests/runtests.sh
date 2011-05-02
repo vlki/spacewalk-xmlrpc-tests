@@ -26,6 +26,9 @@ stdoutTempFile=$( mktemp )
 
 all=0
 pass=0
+duration=0
+
+startTime=$( date +%s )
 
 for makefilePath in $( find $BEAKERLIB_TESTS_DIR -type f -name Makefile )
 do
@@ -48,6 +51,9 @@ do
   # Mark, that we run the test
   all=$( expr $all + 1 )
 
+  # Add the test duration
+  duration=$( expr $duration + $( $ANALYZE_SCRIPT -d "$testJournalXml" ) )
+
   if [ "$testResult" == "PASS" ]; then
     # If it run successfully, just mark it as passed
     pass=$( expr $pass + 1 )
@@ -62,11 +68,16 @@ done
 # Remove the temporary file used for test outputs
 rm -f "$stdoutTempFile"
 
+endTime=$( date +%s )
+diffTime=$( expr $endTime - $startTime )
+
 if [ $all -eq 0 ]; then
   echo "No tests found in $BEAKERLIB_TESTS_DIR"
 else
   echo "Passed $pass out of $all tests"
 fi
+
+echo "Duration: real ${diffTime}s; tests ${duration}s"
 
 if [ $pass -eq $all ]; then
   exit 0

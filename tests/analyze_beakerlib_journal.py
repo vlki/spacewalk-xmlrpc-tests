@@ -7,12 +7,13 @@
 import sys
 import getopt
 from xml.dom.minidom import parse
+from datetime import datetime
 
 def main(argv):
     func = printResult
 
     try:
-        opts, args = getopt.getopt(argv, "ht", ["help", "testname"])
+        opts, args = getopt.getopt(argv, "htd", ["help", "testname", "duration"])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -23,6 +24,8 @@ def main(argv):
             sys.exit(1)
         elif opt in ("-t", "--testname"):
             func = printTestname
+        elif opt in ("-d", "--duration"):
+            func = printDuration
 
     if len(args) != 1:
         usage()
@@ -46,6 +49,17 @@ def printTestname(dom):
     testName = getText(dom.getElementsByTagName("testname")[0].childNodes)
     print(testName)
 
+def printDuration(dom):
+    startTimeStr = getText(dom.getElementsByTagName("starttime")[0].childNodes)
+    endTimeStr = getText(dom.getElementsByTagName("endtime")[0].childNodes)
+
+    fmt = "%Y-%m-%d %H:%M:%S"
+    startTime = datetime.strptime(startTimeStr, fmt)
+    endTime = datetime.strptime(endTimeStr, fmt)
+
+    delta = endTime - startTime
+    print(int(delta.total_seconds()))
+
 def getText(nodelist):
     rc = []
     for node in nodelist:
@@ -65,8 +79,12 @@ def usage():
     print("If option -t|--testname is given, the name of test is printed")
     print("to stdout.") 
     print("")
+    print("If option -d|--duration is given, the duration of test execution")
+    print("in seconds is printed to stdout.")
+    print("")
     print("Usage:")
-    print(" ./analyze_beakerlib_journal.py [-t|--testname] [-h|--help] xmljournalfilename")
+    print(" ./analyze_beakerlib_journal.py [-t|--testname] [-h|--help]")
+    print("                                [-d|--duration] xmljournalfilename")
     print("")
 
 if __name__ == "__main__":
