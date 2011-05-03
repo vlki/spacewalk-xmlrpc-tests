@@ -65,7 +65,7 @@ __INTERNAL_SatelliteXmlRpcRun() {
     # resolve the absolute path
     scriptExpanded=$( readlink -f "$scriptExpanded" )
 
-    rlRun -s -l -t "$scriptExpanded" 0
+    rlRun -s -l -t "$scriptExpanded"
     return 0
 }
 
