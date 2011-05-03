@@ -1,0 +1,6 @@
+PURPOSE of /RHNSatellite/FrontendAPI/errata/clone
+Description: Test of XML-RPC call errata.clone
+Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
+
+This is a test of XML-RPC call errata.clone. It checks whether
+existing errata can be cloned.

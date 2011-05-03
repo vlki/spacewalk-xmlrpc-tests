@@ -52,9 +52,10 @@ __INTERNAL_LogAndJournalFail() {
 }
 
 __INTERNAL_SatelliteXmlRpcRun() {
-    local scriptName=$( cut -d" " -f1 <<< $2 )
+    local scriptName=$( cut -d" " -f1 <<< "$2" )
     local scriptExpanded=""
-    local basePath="$SATELLITE_XMLRPC_SCRIPTS/$1"
+    local basePath=$( readlink -f "$SATELLITE_XMLRPC_SCRIPTS/$1" )
+    local exitCode="$3"
     
     if [ -e "$basePath/$SPACEWALK_VERSION/$scriptName" ]; then
         scriptExpanded="$basePath/$SPACEWALK_VERSION/$2"
@@ -62,11 +63,13 @@ __INTERNAL_SatelliteXmlRpcRun() {
         scriptExpanded="$basePath/$2"
     fi
 
-    # resolve the absolute path
-    scriptExpanded=$( readlink -f "$scriptExpanded" )
-
-    rlRun -s -l -t "$scriptExpanded"
-    return 0
+    # Default exit code set to 0-2
+    if [ -z "$exitCode" ]; then
+        exitCode=0
+    fi
+    
+    rlRun -s -l "$scriptExpanded" "$exitCode"
+    return $?
 }
 
 __INTERNAL_AssertLogNotDiffer(){
@@ -104,7 +107,7 @@ __INTERNAL_AssertLogNotDiffer(){
 Run the given XML-RPC script from library (actual path is affected by version
 of RHN Satellite) against Satellite frontend API.
 
-    rlSatelliteXmlRpcFrontendRun script
+    rlSatelliteXmlRpcFrontendRun script [exit-codes]
 
 Output of the script is accessible in file of name specified in $rlRun_LOG 
 variable. Caller is responsible for removing the file.
@@ -115,14 +118,19 @@ variable. Caller is responsible for removing the file.
 
 The script which should be run from library, e.g. "auth.login.py admin redhat".
 
+=item exit-codes
+
+The exit codes which should be asserted. See rlRun for details. E.g. "0-1"
+Default value is 0.
+
 =back
 
-Returns 0 and asserts PASS if the return value of script is 0 (FAIL otherwise).
+Returns the exit code of script.
 
 =cut
 
 rlSatelliteXmlRpcFrontendRun(){
-    __INTERNAL_SatelliteXmlRpcRun "frontend" $1
+    __INTERNAL_SatelliteXmlRpcRun "frontend" "$1" "$2"
 
     return $?
 }
@@ -138,7 +146,7 @@ rlSatelliteXmlRpcFrontendRun(){
 Run the given XML-RPC script from library (actual path is affected by version
 of RHN Satellite) against Satellite backend API.
 
-    rlSatelliteXmlRpcBackendRun script
+    rlSatelliteXmlRpcBackendRun script [exit-codes]
 
 Output of the script is accessible in file of name specified in $rlRun_LOG 
 variable. Caller is responsible for removing the file.
@@ -149,14 +157,19 @@ variable. Caller is responsible for removing the file.
 
 The script which should be run from library, e.g. "registration.welcome_message.py".
 
+=item exit-codes
+
+The exit codes which should be asserted. See rlRun for details. E.g. "0-1"
+Default value is 0.
+
 =back
 
-Returns 0 and asserts PASS if the return value of script is 0 (FAIL otherwise).
+Returns the exit code of script.
 
 =cut
 
 rlSatelliteXmlRpcBackendRun(){
-    __INTERNAL_SatelliteXmlRpcRun "backend" $1
+    __INTERNAL_SatelliteXmlRpcRun "backend" "$1" "$2"
 
     return $?
 }
