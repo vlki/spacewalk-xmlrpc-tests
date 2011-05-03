@@ -56,6 +56,12 @@ There might be a need to evaluate coverage of non-test actions. For example some
 
 In this case call `sudo ./coverage/reset.sh` to reset the data files, do the stuff and then get the coverage by calling `sudo ./coverage/evaluate.sh`.
 
+### Generating the HTML coverage report ###
+
+It is possible to generate the HTML coverage report of Python as well as
+Java source code. If you have some collected data in data files, just
+use the `coverage/report.sh` script (see its own help).
+
 ### Uninstallation ###
 
 Run `sudo ./coverage/uninstall.sh`. It will rollback changes made during installation.
