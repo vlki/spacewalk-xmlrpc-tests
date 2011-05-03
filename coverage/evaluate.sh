@@ -44,7 +44,7 @@ $SERVICE_TOMCAT restart > /dev/null
 
 if [ -f $PYTHON_COVERAGE_DATAFILE ]; then
     # Generate the XML report into temporary file and returns the tmpfile name
-    command="$COVERAGE_SCRIPTS_DIR/report_xml_python.py $PYTHON_COVERAGE_DATAFILE"
+    command="$COVERAGE_SCRIPTS_DIR/report_python.py $PYTHON_COVERAGE_DATAFILE"
 
     xmlReportPath=$( $command )
 
@@ -68,8 +68,8 @@ fi
 
 if [ -f $JAVA_COVERAGE_DATAFILE ]; then
     # Generates the XML report into /tmp/coverage.xml
-    command="ant -f $COVERAGE_SCRIPTS_DIR/report_xml_java.xml \
-             -Djava.datafile.path=$JAVA_COVERAGE_DATAFILE"
+    command="ant -f $COVERAGE_SCRIPTS_DIR/report_java.xml \
+             -Djava.datafile.path=$JAVA_COVERAGE_DATAFILE xml"
 
     antOutput=$( $command )
 

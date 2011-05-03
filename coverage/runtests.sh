@@ -25,6 +25,9 @@ TESTS_DIR=$COVERAGE_DIR/../tests
 # Reset the data files
 $COVERAGE_DIR/reset.sh
 
+# Wait till Tomcat starts completely
+sleep 2m
+
 # Run tests
 $TESTS_DIR/runtests.sh
 exitCode=$?

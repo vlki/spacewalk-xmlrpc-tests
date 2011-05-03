@@ -1,0 +1,61 @@
+<!--
+Copyright (c) 2011, Jan Vlcek
+All rights reserved.
+
+For further information see enclosed LICENSE file.
+-->
+<!--
+The ant configuration file capable of generating the XML or HTML report out
+of Cobertura coverage data file. The path to it must be provided in
+property java.data.file. If HTML report is needed, also properties
+java.output.dir and java.src.dir are required.
+
+Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
+-->
+<project name="spacewalk-xmlrpc-tests-java-coverage-evaluation" default="xml" basedir=".">
+  <description>
+    The ant configuration file capable of generating the XML or HTML report out
+    of Cobertura coverage data file. The path to it must be provided in
+    property java.data.file. If HTML report is needed, also properties
+    java.output.dir and java.scr.dir are required.
+  </description>
+
+  <!-- Define the Cobertura report task -->
+  <taskdef name="cobertura-report"
+           classname="net.sourceforge.cobertura.ant.ReportTask" />
+
+
+  <target name="xml">
+    <fail message="Please provide java.datafile.path property."
+          unless="java.datafile.path" />
+   
+    <cobertura-report format="xml" destdir="/tmp"
+                      datafile="${java.datafile.path}"
+                      srcdir=".">
+      <!-- NOTE: asm.jar and asm-tree.jar must be explicitly loaded as they 
+                 are not in /etc/ant.d/cobertura -->
+      <classpath location="/usr/share/java/objectweb-asm/asm.jar" />
+      <classpath location="/usr/share/java/objectweb-asm/asm-tree.jar" />
+    </cobertura-report>
+  </target>
+
+  <target name="html">
+    <fail message="Please provide java.datafile.path property."
+          unless="java.datafile.path" />
+    <fail message="Please provide java.output.dir property."
+          unless="java.output.dir" />
+    <fail message="Please provide java.src.dir property."
+          unless="java.src.dir" />
+
+    <cobertura-report format="html" destdir="${java.output.dir}"
+                      datafile="${java.datafile.path}"
+                      srcdir="${java.src.dir}">
+      <!-- NOTE: asm.jar and asm-tree.jar must be explicitly loaded as they 
+                 are not in /etc/ant.d/cobertura -->
+      <classpath location="/usr/share/java/objectweb-asm/asm.jar" />
+      <classpath location="/usr/share/java/objectweb-asm/asm-tree.jar" />
+    </cobertura-report>
+
+  </target>
+
+</project>
