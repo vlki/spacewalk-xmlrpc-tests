@@ -1,6 +1,17 @@
 #!/bin/bash
+#
+# Copyright (c) 2011, Jan Vlcek
+# All rights reserved.
+# 
+# For further information see enclosed LICENSE file.
+#
 
-# TODO: license & stuff
+#
+# This script generates the HTML report of Java or Python coverage.
+# Must be run as superuser because restarts the Tomcat server.
+#
+# Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
+#
 
 if [[ $(/usr/bin/id -u ) -ne 0 ]]; then
     echo "Must be run as root"

@@ -1,7 +1,16 @@
 #!/usr/bin/env python
+#
+# Copyright (c) 2011, Jan Vlcek
+# All rights reserved.
+# 
+# For further information see enclosed LICENSE file
+# 
+# Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
+#
 
 #
-#
+# This script analyzes BeakerLib XML output for various values.
+# See usage for more information.
 #
 
 import sys
@@ -10,6 +19,9 @@ from xml.dom.minidom import parse
 from datetime import datetime
 
 def main(argv):
+    """
+    The main script function.
+    """
     func = printResult
 
     try:
@@ -36,6 +48,9 @@ def main(argv):
     sys.exit(0)
 
 def printResult(dom):
+    """
+    Function parsing the overall result of test from XML DOM.
+    """
     phases = dom.getElementsByTagName("phase")
 
     result = "PASS"
@@ -46,10 +61,16 @@ def printResult(dom):
     print(result)
 
 def printTestname(dom):
+    """
+    Function parsing the full test name from XML DOM.
+    """
     testName = getText(dom.getElementsByTagName("testname")[0].childNodes)
     print(testName)
 
 def printDuration(dom):
+    """
+    Function parsing the duration of test from XML DOM.
+    """
     startTimeStr = getText(dom.getElementsByTagName("starttime")[0].childNodes)
     endTimeStr = getText(dom.getElementsByTagName("endtime")[0].childNodes)
 
@@ -61,6 +82,9 @@ def printDuration(dom):
     print(int(delta.total_seconds()))
 
 def getText(nodelist):
+    """
+    Helper functions which returns the text inside given list of nodes.
+    """
     rc = []
     for node in nodelist:
         if node.nodeType == node.TEXT_NODE:
