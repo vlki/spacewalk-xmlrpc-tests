@@ -57,5 +57,5 @@ fi
 \cp "$JAVA_COVERAGE_EMPTY_DATAFILE" "$JAVA_COVERAGE_DATAFILE"
 chmod a+rwx "$JAVA_COVERAGE_DATAFILE"
 
-echo "Coverage data file were successfully reset"
+echo "Coverage data files were successfully reset"
 exit 0
