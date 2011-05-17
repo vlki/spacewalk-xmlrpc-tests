@@ -158,7 +158,7 @@ Author: Jan Vlcek <xvlcek03@stud.fit.vutbr.cz>
 
 
   
-  <!-- ##### PYTHON-RELATED TARGETS -->
+  <!-- ##### PYTHON-RELATED TARGETS ##### -->
 
   <target name="install-python"
           depends="backup-python-wsgi-conf,backup-python-modpython-conf,readable-httpd-logs">
