@@ -3,6 +3,7 @@ Spacewalk XML-RPC tests
 
 Tests of Spacewalk's XML-RPC interface. Contains two modules -- one contains the actual tests and the other one the coverage tools.
 
+The whole project should be moved to directory under `/opt/`. Preferably `/opt/spacewalk-xmlrpc-tests`.
 
 ## Tests module ##
 
